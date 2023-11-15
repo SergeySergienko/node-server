@@ -9,5 +9,8 @@ const PORT = process.env.PORT || 3000;
 app.get('/', (req, res) => {
     res.send('Hello NodeJS!');
 });
+app.get('/users', (req, res) => {
+    res.send('<h1>Users Page</h1>');
+});
 app.listen(PORT, () => console.log(`App is running on ${PORT} port...`));
 //# sourceMappingURL=index.js.map
