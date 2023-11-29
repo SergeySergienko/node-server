@@ -1,2 +1,2 @@
-export * from './products';
-export * from './tests';
+export * from './products-router';
+export * from './tests-router';

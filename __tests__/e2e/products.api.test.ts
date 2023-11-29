@@ -41,9 +41,14 @@ describe('/products', () => {
   });
 });
 
-// describe('/', () => {
-//   it('should return 200 & text as header', async () => {
-//     const response = await request(app).get('/').expect(200);
-//     expect(response.text).toContain('<h1>');
-//   });
-// });
+describe('/', () => {
+  it('should return 200 & text as header', async () => {
+    const response = await request(app).get('/').expect(200);
+    expect(response.text).toContain('<h1>');
+  });
+
+  it('should return error when token is empty', async () => {
+    const response = await request(app).get('/?token=').expect(400);
+    expect(response.body).toEqual({ errors: expect.any(Array) });
+  });
+});

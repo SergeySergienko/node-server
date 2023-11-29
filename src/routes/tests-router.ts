@@ -1,11 +1,11 @@
 import express, { Request, Response } from 'express';
-import { DBType } from '../types';
+import { testsRepo } from '../repositories';
 
-export const getTestsRouter = (db: DBType) => {
+export const getTestsRouter = () => {
   const router = express.Router();
 
   router.delete('/data', (req: Request, res: Response) => {
-    db.products = [];
+    testsRepo.deleteProducts();
     res.sendStatus(204);
   });
 
