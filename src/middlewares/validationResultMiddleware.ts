@@ -8,5 +8,5 @@ export const getValidationResult = (
 ) => {
   const result = validationResult(req);
   if (result.isEmpty()) next();
-  else res.status(400).send({ errors: result.array() });
+  else return res.status(400).send({ errors: result.array() });
 };

@@ -18,7 +18,7 @@ exports.productsRepo = {
             if (title) {
                 filter.title = { $regex: title };
             }
-            return db_1.productCollection.find(filter).toArray();
+            return yield db_1.productCollection.find(filter).toArray();
         });
     },
     findProductsById(id) {

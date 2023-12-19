@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runDb = exports.productCollection = void 0;
+exports.runDb = exports.userCollection = exports.roleCollection = exports.productCollection = void 0;
 const mongodb_1 = require("mongodb");
 require("dotenv/config");
 const user = process.env.mongodb_user;
@@ -25,12 +25,14 @@ const client = new mongodb_1.MongoClient(uri, {
 exports.productCollection = client
     .db('shop')
     .collection('products');
+exports.roleCollection = client.db('shop').collection('roles');
+exports.userCollection = client.db('shop').collection('users');
 function runDb() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield client.connect();
             yield client.db('admin').command({ ping: 1 });
-            console.log('Pinged your deployment. You successfully connected to MongoDB!');
+            console.log('\x1b[35m%s\x1b[0m', 'Pinged your deployment. You successfully connected to MongoDB!');
         }
         catch (error) {
             console.log(error);

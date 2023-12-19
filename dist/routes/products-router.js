@@ -14,15 +14,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProductsRouter = void 0;
 const express_1 = __importDefault(require("express"));
-const product_service_1 = require("../domain/product-service");
+const services_1 = require("../services");
+const products_1 = __importDefault(require("../controllers/products"));
+const middlewares_1 = require("../middlewares");
 const getProductsRouter = () => {
     const router = express_1.default.Router();
     router.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const products = yield product_service_1.productSevice.findProducts(req.query.title);
+        const products = yield services_1.productSevice.findProducts(req.query.title);
         res.json(products);
     }));
     router.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const product = yield product_service_1.productSevice.findProductsById(+req.params.id);
+        const product = yield services_1.productSevice.findProductsById(+req.params.id);
         if (product) {
             res.status(200).json(product);
         }
@@ -30,42 +32,9 @@ const getProductsRouter = () => {
             res.sendStatus(404);
         }
     }));
-    router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        if (!req.body.title) {
-            res.sendStatus(400);
-            return;
-        }
-        const product = yield product_service_1.productSevice.createProduct(req.body.title);
-        if (product) {
-            res.status(201).json(product);
-        }
-        else {
-            res.sendStatus(500);
-        }
-    }));
-    router.put('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const { id, title, price } = req.body;
-        if (!id || !title || !price) {
-            res.sendStatus(400);
-            return;
-        }
-        const product = yield product_service_1.productSevice.updateProduct(req.body);
-        if (product) {
-            res.status(200).json(product);
-        }
-        else {
-            res.sendStatus(404);
-        }
-    }));
-    router.delete('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-        const isDeleted = yield product_service_1.productSevice.deleteProduct(+req.params.id);
-        if (isDeleted) {
-            res.status(204).send(`Product with id: ${req.params.id} was deleted.`);
-        }
-        else {
-            res.status(404).send(`Product with id: ${req.params.id} wasn't found.`);
-        }
-    }));
+    router.post('/', (0, middlewares_1.roleMiddleware)(['ADMIN']), products_1.default.createProduct);
+    router.put('/', (0, middlewares_1.roleMiddleware)(['ADMIN']), products_1.default.updateProduct);
+    router.delete('/:id', (0, middlewares_1.roleMiddleware)(['ADMIN']), products_1.default.deleteProduct);
     return router;
 };
 exports.getProductsRouter = getProductsRouter;

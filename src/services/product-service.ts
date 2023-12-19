@@ -12,6 +12,11 @@ export const productSevice = {
   },
 
   async createProduct(title: string) {
+    const products = await this.findProducts();
+    const isExist = products.some((p) => p.title === title);
+    if (isExist) {
+      return '409';
+    }
     const newProduct: ProductType = {
       id: +new Date(),
       title: title,

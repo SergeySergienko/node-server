@@ -1,5 +1,5 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
-import { ProductType } from '../types';
+import { ProductType, RoleType, UserType } from '../types';
 import 'dotenv/config';
 
 const user = process.env.mongodb_user;
@@ -18,11 +18,15 @@ export const productCollection = client
   .db('shop')
   .collection<ProductType>('products');
 
+export const roleCollection = client.db('shop').collection<RoleType>('roles');
+export const userCollection = client.db('shop').collection<UserType>('users');
+
 export async function runDb() {
   try {
     await client.connect();
     await client.db('admin').command({ ping: 1 });
     console.log(
+      '\x1b[35m%s\x1b[0m',
       'Pinged your deployment. You successfully connected to MongoDB!'
     );
   } catch (error) {

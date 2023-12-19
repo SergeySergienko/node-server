@@ -9,7 +9,7 @@ export const productsRepo = {
       filter.title = { $regex: title };
     }
 
-    return productCollection.find(filter).toArray();
+    return await productCollection.find(filter).toArray();
   },
 
   async findProductsById(id: number) {

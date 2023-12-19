@@ -7,7 +7,7 @@ const getValidationResult = (req, res, next) => {
     if (result.isEmpty())
         next();
     else
-        res.status(400).send({ errors: result.array() });
+        return res.status(400).send({ errors: result.array() });
 };
 exports.getValidationResult = getValidationResult;
 //# sourceMappingURL=validationResultMiddleware.js.map

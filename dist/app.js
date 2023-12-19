@@ -15,22 +15,13 @@ const queryValidator = (0, express_validator_1.check)('token')
     .withMessage('Token is required')
     .isNumeric()
     .withMessage('Token should be numeric');
-const addEntity = (entity = 'NodeJS!') => (req, res, next) => {
-    //@ts-ignore
-    req.entity = entity;
-    next();
-};
-const AuthGuardMiddleware = (token = '123') => (req, res, next) => {
-    req.query.token === token ? next() : res.sendStatus(401);
-};
 exports.app
     .use(express_1.default.json())
-    // .use(AuthGuardMiddleware('000'))
-    .use(addEntity())
+    .use('/auth', (0, routes_1.getAuthRouter)())
+    .use('/users', (0, routes_1.getUsersRouter)())
     .use('/products', (0, routes_1.getProductsRouter)())
     .use('/__test__', (0, routes_1.getTestsRouter)());
 exports.app.get('/', queryValidator, middlewares_1.getValidationResult, (req, res) => {
-    //@ts-ignore
-    res.send(`<h1>Hello ${req.entity}</h1>`);
+    res.send(`<h1>Hello NodeJS</h1>`);
 });
 //# sourceMappingURL=app.js.map
