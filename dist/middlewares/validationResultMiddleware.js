@@ -2,12 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getValidationResult = void 0;
 const express_validator_1 = require("express-validator");
+const api_error_1 = require("../exceptions/api-error");
 const getValidationResult = (req, res, next) => {
-    const result = (0, express_validator_1.validationResult)(req);
-    if (result.isEmpty())
+    const errors = (0, express_validator_1.validationResult)(req);
+    if (errors.isEmpty())
         next();
     else
-        return res.status(400).send({ errors: result.array() });
+        throw api_error_1.ApiError.BadRequest(400, 'Validation error', errors.array());
 };
 exports.getValidationResult = getValidationResult;
 //# sourceMappingURL=validationResultMiddleware.js.map

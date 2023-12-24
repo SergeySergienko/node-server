@@ -6,7 +6,7 @@ import {
   ProductErrorModel,
   GetProductParamsDto,
   UpdateProductDto,
-} from '../models';
+} from '../models/productDto';
 import { productSevice } from '../services';
 import { RequestWithBody, RequestWithParams } from '../types';
 

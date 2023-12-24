@@ -6,9 +6,9 @@ import {
   ProductViewModel,
   UpdateProductDto,
   ProductErrorModel,
-} from '../models';
+} from '../models/productDto';
 import { productSevice } from '../services';
-import productsController from '../controllers/products';
+import productsController from '../controllers/products-controller';
 import { authMiddleware, roleMiddleware } from '../middlewares';
 import { RequestWithBody, RequestWithParams, RequestWithQuery } from '../types';
 

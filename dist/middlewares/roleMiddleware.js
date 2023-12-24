@@ -7,7 +7,7 @@ exports.roleMiddleware = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const config_1 = require("../config");
 const roleMiddleware = (roles) => (req, res, next) => {
-    var _a, _b;
+    var _a;
     if (req.method === 'OPTIONS') {
         next();
     }
@@ -18,9 +18,9 @@ const roleMiddleware = (roles) => (req, res, next) => {
                 .status(401)
                 .json({ errorMessage: 'User is not authenticated' });
         }
-        const payload = jsonwebtoken_1.default.verify(token, config_1.SECRET_KEY);
+        const payload = jsonwebtoken_1.default.verify(token, config_1.JWT_ACCESS_SECRET);
         let hasRole = false;
-        (_b = payload.roles) === null || _b === void 0 ? void 0 : _b.forEach((role) => {
+        payload.roles.forEach((role) => {
             if (roles.includes(role)) {
                 hasRole = true;
             }

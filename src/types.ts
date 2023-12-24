@@ -12,7 +12,7 @@ export type RoleType = {
 };
 
 export type UserType = {
-  username: string;
+  email: string;
   password: string;
   role: Array<RoleType['value']>;
 };
@@ -29,5 +29,7 @@ export interface CustomRequest extends Request {
   token: string | JwtPayload;
 }
 export interface CustomJwtPayload extends JwtPayload {
+  email: string;
   roles: Array<RoleType['value']>;
+  isActivated: boolean;
 }

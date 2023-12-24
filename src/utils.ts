@@ -1,8 +1,8 @@
 import { ObjectId } from 'mongodb';
 import jwt from 'jsonwebtoken';
-import { ProductViewModel } from './models';
+import { ProductViewModel } from './models/productDto';
 import { ProductType, RoleType } from './types';
-import { SECRET_KEY } from './config';
+import { JWT_ACCESS_SECRET } from './config';
 
 export const getProductViewModel = ({
   id,
@@ -18,5 +18,5 @@ export const generateAccessToken = (
 ) => {
   const payload = { id, roles };
 
-  return jwt.sign(payload, SECRET_KEY, { expiresIn: '24h' });
+  return jwt.sign(payload, JWT_ACCESS_SECRET, { expiresIn: '24h' });
 };

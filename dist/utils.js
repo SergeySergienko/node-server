@@ -13,7 +13,7 @@ const getProductViewModel = ({ id, title, }) => ({
 exports.getProductViewModel = getProductViewModel;
 const generateAccessToken = (id, roles) => {
     const payload = { id, roles };
-    return jsonwebtoken_1.default.sign(payload, config_1.SECRET_KEY, { expiresIn: '24h' });
+    return jsonwebtoken_1.default.sign(payload, config_1.JWT_ACCESS_SECRET, { expiresIn: '24h' });
 };
 exports.generateAccessToken = generateAccessToken;
 //# sourceMappingURL=utils.js.map

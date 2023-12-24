@@ -16,7 +16,7 @@ const authMiddleware = (req, res, next) => {
         if (!token) {
             return res.status(403).json({ errorMessage: 'User is not authorized' });
         }
-        const decodedData = jsonwebtoken_1.default.verify(token, config_1.SECRET_KEY);
+        const decodedData = jsonwebtoken_1.default.verify(token, config_1.JWT_ACCESS_SECRET);
         req.token = decodedData;
         next();
     }

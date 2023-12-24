@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
+import { ApiError } from '../exceptions/api-error';
 
 export const getValidationResult = (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const result = validationResult(req);
-  if (result.isEmpty()) next();
-  else return res.status(400).send({ errors: result.array() });
+  const errors = validationResult(req);
+  if (errors.isEmpty()) next();
+  else throw ApiError.BadRequest(400, 'Validation error', errors.array());
 };

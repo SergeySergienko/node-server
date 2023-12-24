@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import { SECRET_KEY } from '../config';
+import { JWT_ACCESS_SECRET } from '../config';
 import { CustomJwtPayload, RoleType } from '../types';
 
 export const roleMiddleware =
@@ -17,9 +17,9 @@ export const roleMiddleware =
           .status(401)
           .json({ errorMessage: 'User is not authenticated' });
       }
-      const payload = jwt.verify(token, SECRET_KEY);
+      const payload = jwt.verify(token, JWT_ACCESS_SECRET);
       let hasRole = false;
-      (payload as CustomJwtPayload).roles?.forEach((role) => {
+      (payload as CustomJwtPayload).roles.forEach((role) => {
         if (roles.includes(role)) {
           hasRole = true;
         }

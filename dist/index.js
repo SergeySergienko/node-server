@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
 const repositories_1 = require("./repositories");
+require("dotenv/config");
 const PORT = process.env.PORT || 3000;
 const startApp = () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, repositories_1.runDb)();

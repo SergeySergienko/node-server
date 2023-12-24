@@ -8,64 +8,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const repositories_1 = require("../repositories");
+const auth_service_1 = __importDefault(require("../services/auth-service"));
 const utils_1 = require("../utils");
 class AuthController {
     signup(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { username, password } = req.body;
-                const users = yield repositories_1.userCollection.find({}).toArray();
-                const candidate = users.some((u) => u.username === username);
-                if (candidate) {
-                    return res
-                        .status(409)
-                        .json({ errorMessage: 'User with this username already exists' });
+                const { email, password } = req.body;
+                const userData = yield auth_service_1.default.signup(email, password);
+                if (!userData) {
+                    return res.sendStatus(500);
                 }
-                const userRole = yield repositories_1.roleCollection.findOne({ value: 'USER' });
-                if (!userRole) {
-                    return res
-                        .status(400)
-                        .json({ errorMessage: "User's role is not found" });
-                }
-                const newUser = {
-                    username,
-                    password: bcrypt_1.default.hashSync(password, 7),
-                    role: [userRole.value],
-                };
-                const result = yield repositories_1.userCollection.insertOne(newUser);
-                if (result.insertedId) {
-                    const { password } = newUser, rest = __rest(newUser, ["password"]);
-                    return res.status(201).json(rest);
+                else {
+                    res.cookie('refreshToken', userData.refreshToken, {
+                        maxAge: 24 * 60 * 60 * 1000,
+                        httpOnly: true,
+                    });
+                    return res.status(201).json(userData);
                 }
             }
             catch (error) {
                 console.log(error);
-                res.status(500).json({ errorMessage: 'Registration Error' });
+                return res.status(500).json({ errorMessage: 'Registration Error' });
             }
         });
     }
     login(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { username, password } = req.body;
-                const user = yield repositories_1.userCollection.findOne({ username });
+                const { email, password } = req.body;
+                const user = yield repositories_1.userCollection.findOne({ email });
                 if (!user) {
                     return res
                         .status(404)
@@ -82,7 +60,34 @@ class AuthController {
             }
             catch (error) {
                 console.log(error);
-                res.status(500).json({ message: 'Login Error' });
+                return res.status(500).json({ errorMessage: 'Login Error' });
+            }
+        });
+    }
+    logout(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+            }
+            catch (error) {
+                console.log(error);
+            }
+        });
+    }
+    activate() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+            }
+            catch (error) {
+                console.log(error);
+            }
+        });
+    }
+    refresh() {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+            }
+            catch (error) {
+                console.log(error);
             }
         });
     }

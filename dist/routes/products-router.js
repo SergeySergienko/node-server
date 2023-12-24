@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getProductsRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const services_1 = require("../services");
-const products_1 = __importDefault(require("../controllers/products"));
+const products_controller_1 = __importDefault(require("../controllers/products-controller"));
 const middlewares_1 = require("../middlewares");
 const getProductsRouter = () => {
     const router = express_1.default.Router();
@@ -32,9 +32,9 @@ const getProductsRouter = () => {
             res.sendStatus(404);
         }
     }));
-    router.post('/', (0, middlewares_1.roleMiddleware)(['ADMIN']), products_1.default.createProduct);
-    router.put('/', (0, middlewares_1.roleMiddleware)(['ADMIN']), products_1.default.updateProduct);
-    router.delete('/:id', (0, middlewares_1.roleMiddleware)(['ADMIN']), products_1.default.deleteProduct);
+    router.post('/', (0, middlewares_1.roleMiddleware)(['ADMIN']), products_controller_1.default.createProduct);
+    router.put('/', (0, middlewares_1.roleMiddleware)(['ADMIN']), products_controller_1.default.updateProduct);
+    router.delete('/:id', (0, middlewares_1.roleMiddleware)(['ADMIN']), products_controller_1.default.deleteProduct);
     return router;
 };
 exports.getProductsRouter = getProductsRouter;
