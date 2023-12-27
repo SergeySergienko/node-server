@@ -9,9 +9,9 @@ export const app = express();
 
 app.use(express.json()).use(cookieParser()).use(cors());
 app
-  .use('/auth', getAuthRouter())
-  .use('/users', getUsersRouter())
-  .use('/products', getProductsRouter());
+  .use('/api//auth', getAuthRouter())
+  .use('/api/users', getUsersRouter())
+  .use('/api/products', getProductsRouter());
 app.use(errorMiddleware);
 
 app.get('/', (req: Request, res: Response) => {
