@@ -1,27 +1,37 @@
 import { NextFunction, Request, Response } from 'express';
-import jwt from 'jsonwebtoken';
-import { JWT_ACCESS_SECRET } from '../config';
-import { CustomRequest } from '../types';
+import { ApiError } from '../exceptions/api-error';
+import tokenService from '../services/token-service';
+import { CustomJwtPayload, RoleModel } from '../types';
 
-export const authMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  if (req.method === 'OPTIONS') {
-    next();
-  }
-
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    if (!token) {
-      return res.status(403).json({ errorMessage: 'User is not authorized' });
+export const authMiddleware =
+  (roles: Array<RoleModel['value']>) =>
+  (req: Request, res: Response, next: NextFunction) => {
+    if (req.method === 'OPTIONS') {
+      next();
     }
-    const decodedData = jwt.verify(token, JWT_ACCESS_SECRET);
-    (req as CustomRequest).token = decodedData;
-    next();
-  } catch (error) {
-    console.log(error);
-    res.status(403).json({ errorMessage: 'User is not authorized' });
-  }
-};
+    try {
+      const token = req.headers.authorization?.split(' ')[1];
+      if (!token) {
+        throw ApiError.UnauthorizedError();
+      }
+
+      const userData =
+        tokenService.validateAccessToken<CustomJwtPayload>(token);
+      if (!userData) {
+        throw ApiError.UnauthorizedError();
+      }
+
+      let hasRole = false;
+      userData.roles.forEach((role) => {
+        if (roles.includes(role)) {
+          hasRole = true;
+        }
+      });
+      if (!hasRole) {
+        throw ApiError.ForbiddenError();
+      }
+      next();
+    } catch (error) {
+      return next(error);
+    }
+  };

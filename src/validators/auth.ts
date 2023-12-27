@@ -1,4 +1,4 @@
-import { body, check } from 'express-validator';
+import { body } from 'express-validator';
 
 export const authValidator = [
   body('email', 'email must have email format').isEmail(),

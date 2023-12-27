@@ -1,2 +1,3 @@
 export * from './db';
-export * from './tests-repo';
+export * from './products-repo';
+export * from './users-repo';

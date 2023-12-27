@@ -18,7 +18,7 @@ const repositories_1 = require("../repositories");
 class TokenService {
     generateTokens(payload) {
         const accessToken = jsonwebtoken_1.default.sign(payload, config_1.JWT_ACCESS_SECRET, {
-            expiresIn: '30m',
+            expiresIn: '30s',
         });
         const refreshToken = jsonwebtoken_1.default.sign(payload, config_1.JWT_REFRESH_SECRET, {
             expiresIn: '1d',

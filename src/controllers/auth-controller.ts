@@ -1,34 +1,28 @@
 import { Request, Response, NextFunction } from 'express';
-import { RequestWithBody, RequestWithParams } from '../types';
-import { SignUpDto } from '../models/userDto/SignUpDto';
+import { RequestWithBody, RequestWithParams, UserDto } from '../types';
 import authService from '../services/auth-service';
 import { ApiError } from '../exceptions/api-error';
 
 class AuthController {
   async signup(
-    req: RequestWithBody<SignUpDto>,
+    req: RequestWithBody<UserDto>,
     res: Response,
     next: NextFunction
   ) {
     try {
-      const { email, password } = req.body;
-      const userData = await authService.signup({ email, password });
-      if (!userData) {
-        return res.status(500).json({ errorMessage: 'Registration Error' });
-      } else {
-        res.cookie('refreshToken', userData.refreshToken, {
-          maxAge: 24 * 60 * 60 * 1000,
-          httpOnly: true,
-        });
-        return res.status(201).json(userData);
-      }
+      const userData = await authService.signup(req.body);
+      res.cookie('refreshToken', userData.refreshToken, {
+        maxAge: 24 * 60 * 60 * 1000,
+        httpOnly: true,
+      });
+      return res.status(201).json(userData);
     } catch (error) {
       next(error);
     }
   }
 
   async login(
-    req: RequestWithBody<SignUpDto>,
+    req: RequestWithBody<UserDto>,
     res: Response,
     next: NextFunction
   ) {

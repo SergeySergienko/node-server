@@ -6,11 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUsersRouter = void 0;
 const express_1 = __importDefault(require("express"));
 const users_controller_1 = __importDefault(require("../controllers/users-controller"));
+const middlewares_1 = require("../middlewares");
 const getUsersRouter = () => {
     const router = express_1.default.Router();
-    router.get('/', 
-    // roleMiddleware(['ADMIN']),
-    users_controller_1.default.findUsers);
+    router.get('/', (0, middlewares_1.authMiddleware)(['ADMIN']), users_controller_1.default.findUsers);
     return router;
 };
 exports.getUsersRouter = getUsersRouter;

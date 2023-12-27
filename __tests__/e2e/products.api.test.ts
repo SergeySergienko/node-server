@@ -1,6 +1,6 @@
 import request from 'supertest';
 import { app } from '../../src/app';
-import { CreateProductDto } from '../../src/models';
+import { CreateProductDto } from '../../src/types';
 
 describe('/products', () => {
   beforeAll(async () => {
@@ -16,14 +16,14 @@ describe('/products', () => {
   });
 
   it('should NOT create product with incorrect input data', async () => {
-    const data: CreateProductDto = { title: '' };
+    const data: CreateProductDto = { title: '', price: 0 };
 
     await request(app).post('/products').send(data).expect(400);
     await request(app).get('/products').expect(200, []);
   });
 
   it('should create product with correct input data', async () => {
-    const data: CreateProductDto = { title: 'cucumber' };
+    const data: CreateProductDto = { title: 'cucumber', price: 1 };
     const response = await request(app)
       .post('/products')
       .send(data)

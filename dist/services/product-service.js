@@ -10,45 +10,67 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productSevice = void 0;
-const products_db_repo_1 = require("../repositories/products-db-repo");
-const utils_1 = require("../utils");
+const api_error_1 = require("../exceptions/api-error");
+const products_repo_1 = require("../repositories/products-repo");
 exports.productSevice = {
     findProducts(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            return products_db_repo_1.productsRepo.findProducts(title);
+            const products = products_repo_1.productsRepo.findProducts(title);
+            if (!products) {
+                throw api_error_1.ApiError.ServerError('Internal Server Error');
+            }
+            return products;
         });
     },
     findProductsById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return products_db_repo_1.productsRepo.findProductsById(id);
+            const product = yield products_repo_1.productsRepo.findProductsById(id);
+            if (!product) {
+                throw api_error_1.ApiError.NotFound(`Product with id: ${id} wasn't found`);
+            }
+            return product;
         });
     },
-    createProduct(title) {
+    createProduct({ title, price, }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const products = yield this.findProducts();
-            const isExist = products.some((p) => p.title === title);
-            if (isExist) {
-                return '409';
+            const candidate = yield products_repo_1.productsRepo.findProductsByTitle(title);
+            if (candidate) {
+                throw api_error_1.ApiError.BadRequest(409, `Product with title ${title} already exists`, [
+                    {
+                        type: 'field',
+                        value: title,
+                        msg: 'product title must be unique',
+                        path: 'title',
+                        location: 'body',
+                    },
+                ]);
             }
             const newProduct = {
-                id: +new Date(),
-                title: title,
-                price: 0,
+                title,
+                price,
             };
-            const result = yield products_db_repo_1.productsRepo.createProduct(newProduct);
-            return result && (0, utils_1.getProductViewModel)(result);
+            const result = yield products_repo_1.productsRepo.createProduct(newProduct);
+            if (!result.insertedId)
+                throw api_error_1.ApiError.ServerError('Internal Server Error');
+            return Object.assign(Object.assign({}, newProduct), { _id: result.insertedId });
         });
     },
     updateProduct(product) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield products_db_repo_1.productsRepo.updateProduct(product);
-            return result && (0, utils_1.getProductViewModel)(product);
+            const result = yield products_repo_1.productsRepo.updateProduct(product);
+            if (result.matchedCount !== 1) {
+                throw api_error_1.ApiError.NotFound(`Product with id: ${product._id} wasn't found`);
+            }
+            return product;
         });
     },
     deleteProduct(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield products_db_repo_1.productsRepo.deleteProduct(id);
-            return result;
+            const result = yield products_repo_1.productsRepo.deleteProduct(id);
+            if (result.deletedCount !== 1) {
+                throw api_error_1.ApiError.NotFound(`Product with id: ${id} wasn't found`);
+            }
+            return id;
         });
     },
 };

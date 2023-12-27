@@ -1,8 +1,7 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
-import { ProductType, RoleType, UserType } from '../types';
+import { RoleModel, TokenModel } from '../types';
 import 'dotenv/config';
-import { UserModel } from '../models/dbModels/UserModel';
-import { TokenModel } from '../models/dbModels/TokenModel';
+import { ProductModel, UserModel } from '../types';
 
 const user = process.env.mongodb_user;
 const passwort = process.env.mongodb_passwort;
@@ -18,9 +17,9 @@ const client = new MongoClient(uri, {
 
 export const productCollection = client
   .db('shop')
-  .collection<ProductType>('products');
+  .collection<ProductModel>('products');
 
-export const roleCollection = client.db('shop').collection<RoleType>('roles');
+export const roleCollection = client.db('shop').collection<RoleModel>('roles');
 export const userCollection = client.db('shop').collection<UserModel>('users');
 export const tokenCollection = client
   .db('shop')

@@ -1,27 +1,19 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
-import User from '../models/dbModels/User';
-import Role from '../models/dbModels/Role';
-import { userCollection } from '../repositories';
-import { RequestWithBody, UserType } from '../types';
-import { SignUpDto } from '../models/userDto/SignUpDto';
-import { UserErrorModel, UserViewModel } from '../models/userDto/UserViewModel';
+import { userService } from '../services';
+import { UserViewModel } from '../types';
 
 class UsersController {
   async findUsers(
     req: Request,
-    res: Response<UserViewModel[] | UserErrorModel>
+    res: Response<UserViewModel[]>,
+    next: NextFunction
   ) {
     try {
-      const users = await userCollection.find({}).toArray();
-      const usersForView: UserViewModel[] = users.map((user) => {
-        const { password, ...rest } = user;
-        return rest;
-      });
-      res.json(usersForView);
+      const users = await userService.findUsers();
+      return res.json(users);
     } catch (error) {
-      console.log(error);
-      res.status(500).json({ errorMessage: 'Server Error' });
+      next(error);
     }
   }
 }

@@ -14,6 +14,10 @@ export class ApiError extends Error {
     return new ApiError(401, 'User is not authorized');
   }
 
+  static ForbiddenError() {
+    return new ApiError(403, 'No access to resource');
+  }
+
   static BadRequest(
     status: number,
     message: string,
@@ -24,5 +28,9 @@ export class ApiError extends Error {
 
   static NotFound(message: string, errors: ValidationError[] = []) {
     return new ApiError(404, message, errors);
+  }
+
+  static ServerError(message: string, errors: ValidationError[] = []) {
+    return new ApiError(500, message, errors);
   }
 }

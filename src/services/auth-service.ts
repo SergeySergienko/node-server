@@ -1,15 +1,13 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiError } from '../exceptions/api-error';
-import { UserModel } from '../models/dbModels/UserModel';
-import { SignUpDto } from '../models/userDto/SignUpDto';
 import { roleCollection, userCollection } from '../repositories';
-import { CustomJwtPayload, RoleType } from '../types';
+import { CustomJwtPayload, RoleModel, UserDto, UserModel } from '../types';
 import mailService from './mail-service';
 import tokenService from './token-service';
 
 class AuthService {
-  async signup({ email, password }: SignUpDto) {
+  async signup({ email, password: userPassword }: UserDto) {
     const candidate = await userCollection.findOne({ email });
     if (candidate) {
       throw ApiError.BadRequest(
@@ -27,9 +25,9 @@ class AuthService {
       );
     }
     const userRole = (await roleCollection.findOne({
-      value: 'USER',
-    })) as RoleType;
-    const hashPassword = await bcrypt.hash(password, 7);
+      value: 'ADMIN',
+    })) as RoleModel;
+    const hashPassword = await bcrypt.hash(userPassword, 7);
     const identifier = uuidv4();
     const newUser: UserModel = {
       email,
@@ -38,24 +36,24 @@ class AuthService {
       activationLink: identifier,
       isActivated: false,
     };
-    const result = await userCollection.insertOne(newUser);
-    if (result.insertedId) {
-      await mailService.sendActivationMail(email, identifier);
-      const { password, activationLink, ...user } = newUser;
-      const tokens = tokenService.generateTokens({
-        ...user,
-        _id: result.insertedId,
-      });
-      await tokenService.saveToken(result.insertedId, tokens.refreshToken);
+    const { insertedId } = await userCollection.insertOne(newUser);
+    if (!insertedId) throw ApiError.ServerError('Internal Server Error');
 
-      return {
-        ...tokens,
-        user,
-      };
-    }
+    await mailService.sendActivationMail(email, identifier);
+    const { password, ...user } = newUser;
+    const tokens = tokenService.generateTokens({
+      ...user,
+      _id: insertedId,
+    });
+    await tokenService.saveToken(insertedId, tokens.refreshToken);
+
+    return {
+      ...tokens,
+      user,
+    };
   }
 
-  async login({ email, password: userPassword }: SignUpDto) {
+  async login({ email, password: userPassword }: UserDto) {
     const currentUser = await userCollection.findOne({ email });
     if (!currentUser) {
       throw ApiError.BadRequest(404, 'Incorrect username or password');
@@ -67,7 +65,7 @@ class AuthService {
     if (!isPasswordValid) {
       throw ApiError.BadRequest(404, 'Incorrect username or password');
     }
-    const { password, activationLink, ...user } = currentUser;
+    const { password, ...user } = currentUser;
     const tokens = tokenService.generateTokens(user);
     await tokenService.saveToken(user._id, tokens.refreshToken);
 

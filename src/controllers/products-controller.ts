@@ -1,59 +1,76 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
+import { productSevice } from '../services';
 import {
   CreateProductDto,
-  ProductViewModel,
-  ProductErrorModel,
   GetProductParamsDto,
+  GetProductsQueryDto,
+  ProductViewModel,
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithQuery,
   UpdateProductDto,
-} from '../models/productDto';
-import { productSevice } from '../services';
-import { RequestWithBody, RequestWithParams } from '../types';
+} from '../types';
 
 class ProductsController {
+  async findProducts(
+    req: RequestWithQuery<GetProductsQueryDto>,
+    res: Response<ProductViewModel[]>,
+    next: NextFunction
+  ) {
+    try {
+      const products = await productSevice.findProducts(req.query.title);
+      return res.json(products);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async findProductById(
+    req: RequestWithParams<GetProductParamsDto>,
+    res: Response<ProductViewModel>,
+    next: NextFunction
+  ) {
+    try {
+      const product = await productSevice.findProductsById(req.params.id);
+      return res.json(product);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   async createProduct(
     req: RequestWithBody<CreateProductDto>,
-    res: Response<ProductViewModel | ProductErrorModel>
+    res: Response<ProductViewModel>,
+    next: NextFunction
   ) {
-    if (!req.body.title) {
-      res.sendStatus(400);
-      return;
-    }
-    const product = await productSevice.createProduct(req.body.title);
-    if (!product) {
-      res.sendStatus(500);
-    } else if (product === '409') {
-      res
-        .status(409)
-        .json({ errorMessage: 'Product with this title already exists' });
-    } else {
-      res.status(201).json(product);
+    try {
+      const product = await productSevice.createProduct(req.body);
+      return res.status(201).json(product);
+    } catch (error) {
+      next(error);
     }
   }
 
   async updateProduct(
     req: RequestWithBody<UpdateProductDto>,
-    res: Response<ProductViewModel>
+    res: Response<ProductViewModel>,
+    next: NextFunction
   ) {
-    const { id, title, price } = req.body;
-    if (!id || !title || !price) {
-      res.sendStatus(400);
-      return;
-    }
-    const product = await productSevice.updateProduct(req.body);
-    if (product) {
-      res.status(200).json(product);
-    } else {
-      res.sendStatus(404);
+    try {
+      const product = await productSevice.updateProduct(req.body);
+      return res.json(product);
+    } catch (error) {
+      next(error);
     }
   }
 
-  async deleteProduct(req: Request, res: Response) {
-    const isDeleted = await productSevice.deleteProduct(+req.params.id);
-    if (isDeleted) {
-      res.status(204).send(`Product with id: ${req.params.id} was deleted.`);
-    } else {
-      res.status(404).send(`Product with id: ${req.params.id} wasn't found.`);
+  async deleteProduct(req: Request, res: Response, next: NextFunction) {
+    try {
+      const id = await productSevice.deleteProduct(req.params.id);
+      return res.json({ id, message: 'Product was deleted successfully' });
+    } catch (error) {
+      next(error);
     }
   }
 }

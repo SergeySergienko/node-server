@@ -30,7 +30,7 @@ const repositories_1 = require("../repositories");
 const mail_service_1 = __importDefault(require("./mail-service"));
 const token_service_1 = __importDefault(require("./token-service"));
 class AuthService {
-    signup({ email, password }) {
+    signup({ email, password: userPassword }) {
         return __awaiter(this, void 0, void 0, function* () {
             const candidate = yield repositories_1.userCollection.findOne({ email });
             if (candidate) {
@@ -45,9 +45,9 @@ class AuthService {
                 ]);
             }
             const userRole = (yield repositories_1.roleCollection.findOne({
-                value: 'USER',
+                value: 'ADMIN',
             }));
-            const hashPassword = yield bcrypt_1.default.hash(password, 7);
+            const hashPassword = yield bcrypt_1.default.hash(userPassword, 7);
             const identifier = (0, uuid_1.v4)();
             const newUser = {
                 email,
@@ -56,14 +56,14 @@ class AuthService {
                 activationLink: identifier,
                 isActivated: false,
             };
-            const result = yield repositories_1.userCollection.insertOne(newUser);
-            if (result.insertedId) {
-                yield mail_service_1.default.sendActivationMail(email, identifier);
-                const { password, activationLink } = newUser, user = __rest(newUser, ["password", "activationLink"]);
-                const tokens = token_service_1.default.generateTokens(Object.assign(Object.assign({}, user), { _id: result.insertedId }));
-                yield token_service_1.default.saveToken(result.insertedId, tokens.refreshToken);
-                return Object.assign(Object.assign({}, tokens), { user });
-            }
+            const { insertedId } = yield repositories_1.userCollection.insertOne(newUser);
+            if (!insertedId)
+                throw api_error_1.ApiError.ServerError('Internal Server Error');
+            yield mail_service_1.default.sendActivationMail(email, identifier);
+            const { password } = newUser, user = __rest(newUser, ["password"]);
+            const tokens = token_service_1.default.generateTokens(Object.assign(Object.assign({}, user), { _id: insertedId }));
+            yield token_service_1.default.saveToken(insertedId, tokens.refreshToken);
+            return Object.assign(Object.assign({}, tokens), { user });
         });
     }
     login({ email, password: userPassword }) {
@@ -76,7 +76,7 @@ class AuthService {
             if (!isPasswordValid) {
                 throw api_error_1.ApiError.BadRequest(404, 'Incorrect username or password');
             }
-            const { password, activationLink } = currentUser, user = __rest(currentUser, ["password", "activationLink"]);
+            const { password } = currentUser, user = __rest(currentUser, ["password"]);
             const tokens = token_service_1.default.generateTokens(user);
             yield token_service_1.default.saveToken(user._id, tokens.refreshToken);
             return Object.assign(Object.assign({}, tokens), { user });

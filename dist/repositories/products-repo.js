@@ -10,37 +10,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productsRepo = void 0;
-const db_1 = require("../db/db");
-const utils_1 = require("../utils");
-const delay = (ms) => __awaiter(void 0, void 0, void 0, function* () {
-    const start = performance.now();
-    while (performance.now() - start < ms) { }
-});
+const mongodb_1 = require("mongodb");
+const db_1 = require("./db");
 exports.productsRepo = {
     findProducts(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            let foundProducts = db_1.db.products;
+            const filter = {};
             if (title) {
-                yield delay(5000);
-                foundProducts = db_1.db.products.filter((p) => p.title.includes(title));
+                filter.title = { $regex: title };
             }
-            return foundProducts.map(utils_1.getProductViewModel);
+            return yield db_1.productCollection.find(filter).toArray();
         });
     },
     findProductsById(id) {
-        const product = db_1.db.products.find((p) => p.id === +id);
-        if (!product)
-            return;
-        return (0, utils_1.getProductViewModel)(product);
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.productCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
+        });
     },
-    createProduct(title) {
-        const newProduct = {
-            id: +new Date(),
-            title: title,
-            price: 0,
-        };
-        db_1.db.products.push(newProduct);
-        return (0, utils_1.getProductViewModel)(newProduct);
+    findProductsByTitle(title) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.productCollection.findOne({ title });
+        });
+    },
+    createProduct(product) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.productCollection.insertOne(product);
+        });
+    },
+    updateProduct({ _id, price, title }) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.productCollection.updateOne({ _id: new mongodb_1.ObjectId(_id) }, { $set: { price, title } });
+        });
+    },
+    deleteProduct(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield db_1.productCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+        });
     },
 };
 //# sourceMappingURL=products-repo.js.map

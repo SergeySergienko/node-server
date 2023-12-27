@@ -14,8 +14,7 @@ exports.app.use(express_1.default.json()).use((0, cookie_parser_1.default)()).us
 exports.app
     .use('/auth', (0, routes_1.getAuthRouter)())
     .use('/users', (0, routes_1.getUsersRouter)())
-    .use('/products', (0, routes_1.getProductsRouter)())
-    .use('/__test__', (0, routes_1.getTestsRouter)());
+    .use('/products', (0, routes_1.getProductsRouter)());
 exports.app.use(middlewares_1.errorMiddleware);
 exports.app.get('/', (req, res) => {
     res.send(`<h1>Hello NodeJS</h1>`);

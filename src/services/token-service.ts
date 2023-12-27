@@ -1,13 +1,13 @@
 import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
 import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '../config';
-import { UserViewModel } from '../models/userDto/UserViewModel';
 import { tokenCollection } from '../repositories';
+import { UserViewModel } from '../types';
 
 class TokenService {
   generateTokens(payload: UserViewModel) {
     const accessToken = jwt.sign(payload, JWT_ACCESS_SECRET, {
-      expiresIn: '30m',
+      expiresIn: '30s',
     });
     const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, {
       expiresIn: '1d',
@@ -18,8 +18,8 @@ class TokenService {
 
   validateAccessToken<T>(token: string) {
     try {
-      const userData = jwt.verify(token, JWT_ACCESS_SECRET);
-      return userData as T;
+      const userData = jwt.verify(token, JWT_ACCESS_SECRET) as T;
+      return userData;
     } catch (error) {
       return null;
     }
@@ -27,8 +27,8 @@ class TokenService {
 
   validateRefreshToken<T>(token: string) {
     try {
-      const userData = jwt.verify(token, JWT_REFRESH_SECRET);
-      return userData as T;
+      const userData = jwt.verify(token, JWT_REFRESH_SECRET) as T;
+      return userData;
     } catch (error) {
       return null;
     }

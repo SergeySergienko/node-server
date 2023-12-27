@@ -1,53 +1,49 @@
 import express, { Request, Response } from 'express';
+import { productSevice } from '../services';
+import productsController from '../controllers/products-controller';
+import { getValidationResult, authMiddleware } from '../middlewares';
 import {
   GetProductParamsDto,
   GetProductsQueryDto,
-  CreateProductDto,
   ProductViewModel,
-  UpdateProductDto,
-  ProductErrorModel,
-} from '../models/productDto';
-import { productSevice } from '../services';
-import productsController from '../controllers/products-controller';
-import { authMiddleware, roleMiddleware } from '../middlewares';
-import { RequestWithBody, RequestWithParams, RequestWithQuery } from '../types';
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithQuery,
+} from '../types';
+import {
+  createProductValidator,
+  deleteProductValidator,
+  updateProductValidator,
+} from '../validators';
 
 export const getProductsRouter = () => {
   const router = express.Router();
 
-  router.get(
+  router.get('/', productsController.findProducts);
+
+  router.get('/:id', productsController.findProductById);
+
+  router.post(
     '/',
-    async (
-      req: RequestWithQuery<GetProductsQueryDto>,
-      res: Response<ProductViewModel[]>
-    ) => {
-      const products = await productSevice.findProducts(req.query.title);
-      res.json(products);
-    }
+    authMiddleware(['ADMIN']),
+    createProductValidator,
+    getValidationResult,
+    productsController.createProduct
   );
 
-  router.get(
-    '/:id',
-    async (
-      req: RequestWithParams<GetProductParamsDto>,
-      res: Response<ProductViewModel>
-    ) => {
-      const product = await productSevice.findProductsById(+req.params.id);
-      if (product) {
-        res.status(200).json(product);
-      } else {
-        res.sendStatus(404);
-      }
-    }
+  router.put(
+    '/',
+    authMiddleware(['ADMIN']),
+    updateProductValidator,
+    getValidationResult,
+    productsController.updateProduct
   );
-
-  router.post('/', roleMiddleware(['ADMIN']), productsController.createProduct);
-
-  router.put('/', roleMiddleware(['ADMIN']), productsController.updateProduct);
 
   router.delete(
     '/:id',
-    roleMiddleware(['ADMIN']),
+    authMiddleware(['ADMIN']),
+    deleteProductValidator,
+    getValidationResult,
     productsController.deleteProduct
   );
 

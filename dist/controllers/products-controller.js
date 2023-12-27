@@ -11,50 +11,58 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const services_1 = require("../services");
 class ProductsController {
-    createProduct(req, res) {
+    findProducts(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (!req.body.title) {
-                res.sendStatus(400);
-                return;
+            try {
+                const products = yield services_1.productSevice.findProducts(req.query.title);
+                return res.json(products);
             }
-            const product = yield services_1.productSevice.createProduct(req.body.title);
-            if (!product) {
-                res.sendStatus(500);
-            }
-            else if (product === '409') {
-                res
-                    .status(409)
-                    .json({ errorMessage: 'Product with this title already exists' });
-            }
-            else {
-                res.status(201).json(product);
+            catch (error) {
+                next(error);
             }
         });
     }
-    updateProduct(req, res) {
+    findProductById(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { id, title, price } = req.body;
-            if (!id || !title || !price) {
-                res.sendStatus(400);
-                return;
+            try {
+                const product = yield services_1.productSevice.findProductsById(req.params.id);
+                return res.json(product);
             }
-            const product = yield services_1.productSevice.updateProduct(req.body);
-            if (product) {
-                res.status(200).json(product);
-            }
-            else {
-                res.sendStatus(404);
+            catch (error) {
+                next(error);
             }
         });
     }
-    deleteProduct(req, res) {
+    createProduct(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const isDeleted = yield services_1.productSevice.deleteProduct(+req.params.id);
-            if (isDeleted) {
-                res.status(204).send(`Product with id: ${req.params.id} was deleted.`);
+            try {
+                const product = yield services_1.productSevice.createProduct(req.body);
+                return res.status(201).json(product);
             }
-            else {
-                res.status(404).send(`Product with id: ${req.params.id} wasn't found.`);
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    updateProduct(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const product = yield services_1.productSevice.updateProduct(req.body);
+                return res.json(product);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    deleteProduct(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = yield services_1.productSevice.deleteProduct(req.params.id);
+                return res.json({ id, message: 'Product was deleted successfully' });
+            }
+            catch (error) {
+                next(error);
             }
         });
     }

@@ -18,18 +18,12 @@ class AuthController {
     signup(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const { email, password } = req.body;
-                const userData = yield auth_service_1.default.signup({ email, password });
-                if (!userData) {
-                    return res.status(500).json({ errorMessage: 'Registration Error' });
-                }
-                else {
-                    res.cookie('refreshToken', userData.refreshToken, {
-                        maxAge: 24 * 60 * 60 * 1000,
-                        httpOnly: true,
-                    });
-                    return res.status(201).json(userData);
-                }
+                const userData = yield auth_service_1.default.signup(req.body);
+                res.cookie('refreshToken', userData.refreshToken, {
+                    maxAge: 24 * 60 * 60 * 1000,
+                    httpOnly: true,
+                });
+                return res.status(201).json(userData);
             }
             catch (error) {
                 next(error);

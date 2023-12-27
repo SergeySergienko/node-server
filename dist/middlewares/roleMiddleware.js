@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.roleMiddleware = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const config_1 = require("../config");
+const api_error_1 = require("../exceptions/api-error");
+const token_service_1 = __importDefault(require("../services/token-service"));
 const roleMiddleware = (roles) => (req, res, next) => {
     var _a;
     if (req.method === 'OPTIONS') {
@@ -14,25 +14,25 @@ const roleMiddleware = (roles) => (req, res, next) => {
     try {
         const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(' ')[1];
         if (!token) {
-            return res
-                .status(401)
-                .json({ errorMessage: 'User is not authenticated' });
+            throw api_error_1.ApiError.UnauthorizedError();
         }
-        const payload = jsonwebtoken_1.default.verify(token, config_1.JWT_ACCESS_SECRET);
+        const userData = token_service_1.default.validateAccessToken(token);
+        if (!userData) {
+            throw api_error_1.ApiError.UnauthorizedError();
+        }
         let hasRole = false;
-        payload.roles.forEach((role) => {
+        userData.roles.forEach((role) => {
             if (roles.includes(role)) {
                 hasRole = true;
             }
         });
         if (!hasRole) {
-            return res.status(403).json({ errorMessage: 'No access to resource' });
+            throw api_error_1.ApiError.ForbiddenError();
         }
         next();
     }
     catch (error) {
-        console.log(error);
-        res.status(401).json({ errorMessage: 'User is not authenticated' });
+        next(error);
     }
 };
 exports.roleMiddleware = roleMiddleware;
