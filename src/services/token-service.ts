@@ -1,15 +1,17 @@
 import jwt from 'jsonwebtoken';
 import { ObjectId } from 'mongodb';
-import { JWT_ACCESS_SECRET, JWT_REFRESH_SECRET } from '../config';
+import { ApiError } from '../exceptions/api-error';
 import { tokenCollection } from '../repositories';
 import { UserViewModel } from '../types';
 
 class TokenService {
   generateTokens(payload: UserViewModel) {
-    const accessToken = jwt.sign(payload, JWT_ACCESS_SECRET, {
+    if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET)
+      throw ApiError.ServerError('Internal Server Error');
+    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
       expiresIn: '15s',
     });
-    const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, {
+    const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
       expiresIn: '30s',
     });
 
@@ -17,8 +19,10 @@ class TokenService {
   }
 
   validateAccessToken<T>(token: string) {
+    if (!process.env.JWT_ACCESS_SECRET)
+      throw ApiError.ServerError('Internal Server Error');
     try {
-      const userData = jwt.verify(token, JWT_ACCESS_SECRET) as T;
+      const userData = jwt.verify(token, process.env.JWT_ACCESS_SECRET) as T;
       return userData;
     } catch (error) {
       return null;
@@ -26,8 +30,10 @@ class TokenService {
   }
 
   validateRefreshToken<T>(token: string) {
+    if (!process.env.JWT_REFRESH_SECRET)
+      throw ApiError.ServerError('Internal Server Error');
     try {
-      const userData = jwt.verify(token, JWT_REFRESH_SECRET) as T;
+      const userData = jwt.verify(token, process.env.JWT_REFRESH_SECRET) as T;
       return userData;
     } catch (error) {
       return null;
