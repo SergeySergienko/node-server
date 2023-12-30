@@ -22,12 +22,12 @@ exports.productsRepo = {
             return yield db_1.productCollection.find(filter).toArray();
         });
     },
-    findProductsById(id) {
+    findProductById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield db_1.productCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
         });
     },
-    findProductsByTitle(title) {
+    findProductByTitle(title) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield db_1.productCollection.findOne({ title });
         });

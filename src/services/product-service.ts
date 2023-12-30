@@ -16,19 +16,16 @@ export const productSevice = {
     return products;
   },
 
-  async findProductsById(id: string): Promise<ProductViewModel> {
-    const product = await productsRepo.findProductsById(id);
+  async findProductById(id: string): Promise<ProductViewModel> {
+    const product = await productsRepo.findProductById(id);
     if (!product) {
       throw ApiError.NotFound(`Product with id: ${id} wasn't found`);
     }
     return product;
   },
 
-  async createProduct({
-    title,
-    price,
-  }: CreateProductDto): Promise<ProductViewModel> {
-    const candidate = await productsRepo.findProductsByTitle(title);
+  async createProduct({ title, price }: CreateProductDto) {
+    const candidate = await productsRepo.findProductByTitle(title);
     if (candidate) {
       throw ApiError.BadRequest(
         409,
@@ -54,7 +51,7 @@ export const productSevice = {
     return { ...newProduct, _id: result.insertedId };
   },
 
-  async updateProduct(product: UpdateProductDto): Promise<ProductViewModel> {
+  async updateProduct(product: UpdateProductDto) {
     const result = await productsRepo.updateProduct(product);
     if (result.matchedCount !== 1) {
       throw ApiError.NotFound(`Product with id: ${product._id} wasn't found`);

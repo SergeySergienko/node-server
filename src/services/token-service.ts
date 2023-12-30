@@ -7,10 +7,10 @@ import { UserViewModel } from '../types';
 class TokenService {
   generateTokens(payload: UserViewModel) {
     const accessToken = jwt.sign(payload, JWT_ACCESS_SECRET, {
-      expiresIn: '30s',
+      expiresIn: '15s',
     });
     const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, {
-      expiresIn: '1d',
+      expiresIn: '30s',
     });
 
     return { accessToken, refreshToken };

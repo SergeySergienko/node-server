@@ -22,6 +22,28 @@ class UsersController {
             }
         });
     }
+    updateUser(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const user = yield services_1.userService.updateUser(req.body);
+                return res.json(user);
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
+    deleteUser(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const id = yield services_1.userService.deleteUser(req.params.id);
+                return res.json({ id, message: 'User was deleted successfully' });
+            }
+            catch (error) {
+                next(error);
+            }
+        });
+    }
 }
 exports.default = new UsersController();
 //# sourceMappingURL=users-controller.js.map

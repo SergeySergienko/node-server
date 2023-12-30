@@ -32,7 +32,7 @@ class ProductsController {
     next: NextFunction
   ) {
     try {
-      const product = await productSevice.findProductsById(req.params.id);
+      const product = await productSevice.findProductById(req.params.id);
       return res.json(product);
     } catch (error) {
       next(error);

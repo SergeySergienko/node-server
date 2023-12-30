@@ -37,5 +37,23 @@ exports.userService = {
             return usersForView;
         });
     },
+    updateUser(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield repositories_1.usersRepo.updateUser(user);
+            if (result.matchedCount !== 1) {
+                throw api_error_1.ApiError.NotFound(`Product with id: ${user._id} wasn't found`);
+            }
+            return user;
+        });
+    },
+    deleteUser(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const result = yield repositories_1.usersRepo.deleteUser(id);
+            if (result.deletedCount !== 1) {
+                throw api_error_1.ApiError.NotFound(`User with id: ${id} wasn't found`);
+            }
+            return id;
+        });
+    },
 };
 //# sourceMappingURL=user-service.js.map

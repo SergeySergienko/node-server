@@ -24,9 +24,10 @@ class AuthService {
         ]
       );
     }
-    const userRole = (await roleCollection.findOne({
-      value: 'ADMIN',
-    })) as RoleModel;
+    const userRole = await roleCollection.findOne({
+      value: 'OWNER',
+    });
+    if (!userRole) throw ApiError.NotFound('User role not found');
     const hashPassword = await bcrypt.hash(userPassword, 7);
     const identifier = uuidv4();
     const newUser: UserModel = {

@@ -16,5 +16,5 @@ export interface UserViewModel extends Omit<UserModel, 'password'> {
 }
 
 export interface RoleModel {
-  value: 'USER' | 'ADMIN';
+  value: 'USER' | 'ADMIN' | 'OWNER';
 }

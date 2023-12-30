@@ -22,18 +22,18 @@ exports.productSevice = {
             return products;
         });
     },
-    findProductsById(id) {
+    findProductById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const product = yield products_repo_1.productsRepo.findProductsById(id);
+            const product = yield products_repo_1.productsRepo.findProductById(id);
             if (!product) {
                 throw api_error_1.ApiError.NotFound(`Product with id: ${id} wasn't found`);
             }
             return product;
         });
     },
-    createProduct({ title, price, }) {
+    createProduct({ title, price }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const candidate = yield products_repo_1.productsRepo.findProductsByTitle(title);
+            const candidate = yield products_repo_1.productsRepo.findProductByTitle(title);
             if (candidate) {
                 throw api_error_1.ApiError.BadRequest(409, `Product with title ${title} already exists`, [
                     {

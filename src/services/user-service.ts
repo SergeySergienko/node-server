@@ -15,4 +15,20 @@ export const userService = {
 
     return usersForView;
   },
+
+  async updateUser(user: UserViewModel) {
+    const result = await usersRepo.updateUser(user);
+    if (result.matchedCount !== 1) {
+      throw ApiError.NotFound(`Product with id: ${user._id} wasn't found`);
+    }
+    return user;
+  },
+
+  async deleteUser(id: string) {
+    const result = await usersRepo.deleteUser(id);
+    if (result.deletedCount !== 1) {
+      throw ApiError.NotFound(`User with id: ${id} wasn't found`);
+    }
+    return id;
+  },
 };

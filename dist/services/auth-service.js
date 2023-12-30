@@ -44,9 +44,11 @@ class AuthService {
                     },
                 ]);
             }
-            const userRole = (yield repositories_1.roleCollection.findOne({
-                value: 'ADMIN',
-            }));
+            const userRole = yield repositories_1.roleCollection.findOne({
+                value: 'OWNER',
+            });
+            if (!userRole)
+                throw api_error_1.ApiError.NotFound('User role not found');
             const hashPassword = yield bcrypt_1.default.hash(userPassword, 7);
             const identifier = (0, uuid_1.v4)();
             const newUser = {

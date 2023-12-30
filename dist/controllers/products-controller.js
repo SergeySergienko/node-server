@@ -25,7 +25,7 @@ class ProductsController {
     findProductById(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const product = yield services_1.productSevice.findProductsById(req.params.id);
+                const product = yield services_1.productSevice.findProductById(req.params.id);
                 return res.json(product);
             }
             catch (error) {

@@ -25,7 +25,7 @@ export const getProductsRouter = () => {
 
   router.post(
     '/',
-    authMiddleware(['ADMIN']),
+    authMiddleware(['ADMIN', 'OWNER']),
     createProductValidator,
     getValidationResult,
     productsController.createProduct
@@ -33,7 +33,7 @@ export const getProductsRouter = () => {
 
   router.put(
     '/',
-    authMiddleware(['ADMIN']),
+    authMiddleware(['ADMIN', 'OWNER']),
     updateProductValidator,
     getValidationResult,
     productsController.updateProduct
@@ -41,7 +41,7 @@ export const getProductsRouter = () => {
 
   router.delete(
     '/:id',
-    authMiddleware(['ADMIN']),
+    authMiddleware(['ADMIN', 'OWNER']),
     deleteProductValidator,
     getValidationResult,
     productsController.deleteProduct

@@ -7,9 +7,17 @@ import { errorMiddleware } from './middlewares';
 
 export const app = express();
 
-app.use(express.json()).use(cookieParser()).use(cors());
 app
-  .use('/api//auth', getAuthRouter())
+  .use(express.json())
+  .use(cookieParser())
+  .use(
+    cors({
+      credentials: true,
+      origin: process.env.CLIENT_URL,
+    })
+  );
+app
+  .use('/api/auth', getAuthRouter())
   .use('/api/users', getUsersRouter())
   .use('/api/products', getProductsRouter());
 app.use(errorMiddleware);

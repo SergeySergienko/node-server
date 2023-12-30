@@ -10,11 +10,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.usersRepo = void 0;
+const mongodb_1 = require("mongodb");
 const _1 = require(".");
 exports.usersRepo = {
     findUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield _1.userCollection.find({}).toArray();
+        });
+    },
+    updateUser(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield _1.userCollection.updateOne({ _id: new mongodb_1.ObjectId(user._id) }, { $set: { roles: user.roles } });
+        });
+    },
+    deleteUser(id) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield _1.userCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
         });
     },
 };

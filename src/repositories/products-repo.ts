@@ -11,11 +11,11 @@ export const productsRepo = {
     return await productCollection.find(filter).toArray();
   },
 
-  async findProductsById(id: string) {
+  async findProductById(id: string) {
     return await productCollection.findOne({ _id: new ObjectId(id) });
   },
 
-  async findProductsByTitle(title: string) {
+  async findProductByTitle(title: string) {
     return await productCollection.findOne({ title });
   },
 
