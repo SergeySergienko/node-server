@@ -13,21 +13,25 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const config_1 = require("../config");
+const api_error_1 = require("../exceptions/api-error");
 const repositories_1 = require("../repositories");
 class TokenService {
     generateTokens(payload) {
-        const accessToken = jsonwebtoken_1.default.sign(payload, config_1.JWT_ACCESS_SECRET, {
+        if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET)
+            throw api_error_1.ApiError.ServerError('Internal Server Error');
+        const accessToken = jsonwebtoken_1.default.sign(payload, process.env.JWT_ACCESS_SECRET, {
             expiresIn: '15s',
         });
-        const refreshToken = jsonwebtoken_1.default.sign(payload, config_1.JWT_REFRESH_SECRET, {
+        const refreshToken = jsonwebtoken_1.default.sign(payload, process.env.JWT_REFRESH_SECRET, {
             expiresIn: '30s',
         });
         return { accessToken, refreshToken };
     }
     validateAccessToken(token) {
+        if (!process.env.JWT_ACCESS_SECRET)
+            throw api_error_1.ApiError.ServerError('Internal Server Error');
         try {
-            const userData = jsonwebtoken_1.default.verify(token, config_1.JWT_ACCESS_SECRET);
+            const userData = jsonwebtoken_1.default.verify(token, process.env.JWT_ACCESS_SECRET);
             return userData;
         }
         catch (error) {
@@ -35,8 +39,10 @@ class TokenService {
         }
     }
     validateRefreshToken(token) {
+        if (!process.env.JWT_REFRESH_SECRET)
+            throw api_error_1.ApiError.ServerError('Internal Server Error');
         try {
-            const userData = jsonwebtoken_1.default.verify(token, config_1.JWT_REFRESH_SECRET);
+            const userData = jsonwebtoken_1.default.verify(token, process.env.JWT_REFRESH_SECRET);
             return userData;
         }
         catch (error) {
