@@ -27,6 +27,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const uuid_1 = require("uuid");
 const api_error_1 = require("../exceptions/api-error");
 const repositories_1 = require("../repositories");
+const utils_1 = require("../utils");
 const mail_service_1 = __importDefault(require("./mail-service"));
 const token_service_1 = __importDefault(require("./token-service"));
 class AuthService {
@@ -61,10 +62,11 @@ class AuthService {
             const { insertedId } = yield repositories_1.userCollection.insertOne(newUser);
             if (!insertedId)
                 throw api_error_1.ApiError.ServerError('Internal Server Error');
+            const userId = insertedId.toString();
             yield mail_service_1.default.sendActivationMail(email, identifier);
             const { password } = newUser, user = __rest(newUser, ["password"]);
-            const tokens = token_service_1.default.generateTokens(Object.assign(Object.assign({}, user), { _id: insertedId }));
-            yield token_service_1.default.saveToken(insertedId, tokens.refreshToken);
+            const tokens = token_service_1.default.generateTokens(Object.assign(Object.assign({}, user), { id: userId }));
+            yield token_service_1.default.saveToken(userId, tokens.refreshToken);
             return Object.assign(Object.assign({}, tokens), { user });
         });
     }
@@ -78,9 +80,9 @@ class AuthService {
             if (!isPasswordValid) {
                 throw api_error_1.ApiError.BadRequest(404, 'Incorrect username or password');
             }
-            const { password } = currentUser, user = __rest(currentUser, ["password"]);
+            const user = (0, utils_1.userModelMapper)(currentUser);
             const tokens = token_service_1.default.generateTokens(user);
-            yield token_service_1.default.saveToken(user._id, tokens.refreshToken);
+            yield token_service_1.default.saveToken(user.id, tokens.refreshToken);
             return Object.assign(Object.assign({}, tokens), { user });
         });
     }
@@ -113,8 +115,8 @@ class AuthService {
             if (!user) {
                 throw api_error_1.ApiError.UnauthorizedError();
             }
-            const tokens = token_service_1.default.generateTokens(user);
-            yield token_service_1.default.saveToken(user._id, tokens.refreshToken);
+            const tokens = token_service_1.default.generateTokens((0, utils_1.userModelMapper)(user));
+            yield token_service_1.default.saveToken((0, utils_1.userModelMapper)(user).id, tokens.refreshToken);
             return Object.assign(Object.assign({}, tokens), { user });
         });
     }

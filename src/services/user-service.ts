@@ -1,6 +1,7 @@
 import { ApiError } from '../exceptions/api-error';
+import { UserOutputModel } from '../models';
 import { usersRepo } from '../repositories';
-import { UserViewModel } from '../types';
+import { userModelMapper } from '../utils';
 
 export const userService = {
   async findUsers() {
@@ -8,20 +9,16 @@ export const userService = {
     if (!users) {
       throw ApiError.ServerError('Internal Server Error');
     }
-    const usersForView: UserViewModel[] = users.map((user) => {
-      const { password, ...rest } = user;
-      return rest;
-    });
-
+    const usersForView: UserOutputModel[] = users.map(userModelMapper);
     return usersForView;
   },
 
-  async updateUser(user: UserViewModel) {
-    const result = await usersRepo.updateUser(user);
-    if (result.matchedCount !== 1) {
-      throw ApiError.NotFound(`Product with id: ${user._id} wasn't found`);
+  async updateUser(user: UserOutputModel): Promise<UserOutputModel> {
+    const updatedUser = await usersRepo.updateUser(user);
+    if (!updatedUser) {
+      throw ApiError.NotFound(`Product with id: ${user.id} wasn't found`);
     }
-    return user;
+    return userModelMapper(updatedUser);
   },
 
   async deleteUser(id: string) {

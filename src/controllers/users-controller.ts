@@ -1,12 +1,12 @@
 import { NextFunction, Request, Response } from 'express';
-
+import { UserOutputModel } from '../models';
 import { userService } from '../services';
-import { RequestWithBody, UserViewModel } from '../types';
+import { RequestWithBody } from '../types';
 
 class UsersController {
   async findUsers(
     req: Request,
-    res: Response<UserViewModel[]>,
+    res: Response<UserOutputModel[]>,
     next: NextFunction
   ) {
     try {
@@ -18,8 +18,8 @@ class UsersController {
   }
 
   async updateUser(
-    req: RequestWithBody<UserViewModel>,
-    res: Response<UserViewModel>,
+    req: RequestWithBody<UserOutputModel>,
+    res: Response<UserOutputModel>,
     next: NextFunction
   ) {
     try {

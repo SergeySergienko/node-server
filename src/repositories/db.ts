@@ -1,7 +1,7 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
-import { RoleModel, TokenModel } from '../types';
 import 'dotenv/config';
-import { ProductModel, UserModel } from '../types';
+import { ProductModel } from '../types';
+import { RoleModel, TokenModel, UserModel } from '../models';
 
 const user = process.env.mongodb_user;
 const passwort = process.env.mongodb_passwort;

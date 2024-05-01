@@ -1,11 +1,10 @@
 import jwt from 'jsonwebtoken';
-import { ObjectId } from 'mongodb';
 import { ApiError } from '../exceptions/api-error';
+import { UserOutputModel } from '../models';
 import { tokenCollection } from '../repositories';
-import { UserViewModel } from '../types';
 
 class TokenService {
-  generateTokens(payload: UserViewModel) {
+  generateTokens(payload: UserOutputModel) {
     if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET)
       throw ApiError.ServerError('Internal Server Error');
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
@@ -40,16 +39,16 @@ class TokenService {
     }
   }
 
-  async saveToken(userId: ObjectId, refreshToken: string) {
-    const tokenData = await tokenCollection.findOne({ user: userId });
+  async saveToken(userId: string, refreshToken: string) {
+    const tokenData = await tokenCollection.findOne({ userId });
     if (tokenData) {
       return await tokenCollection.updateOne(
-        { user: userId },
+        { userId },
         { $set: { refreshToken } }
       );
     }
     const token = await tokenCollection.insertOne({
-      user: userId,
+      userId,
       refreshToken,
     });
     return token;

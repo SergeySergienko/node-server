@@ -8,21 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userService = void 0;
 const api_error_1 = require("../exceptions/api-error");
 const repositories_1 = require("../repositories");
+const utils_1 = require("../utils");
 exports.userService = {
     findUsers() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -30,20 +20,17 @@ exports.userService = {
             if (!users) {
                 throw api_error_1.ApiError.ServerError('Internal Server Error');
             }
-            const usersForView = users.map((user) => {
-                const { password } = user, rest = __rest(user, ["password"]);
-                return rest;
-            });
+            const usersForView = users.map(utils_1.userModelMapper);
             return usersForView;
         });
     },
     updateUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield repositories_1.usersRepo.updateUser(user);
-            if (result.matchedCount !== 1) {
-                throw api_error_1.ApiError.NotFound(`Product with id: ${user._id} wasn't found`);
+            const updatedUser = yield repositories_1.usersRepo.updateUser(user);
+            if (!updatedUser) {
+                throw api_error_1.ApiError.NotFound(`Product with id: ${user.id} wasn't found`);
             }
-            return user;
+            return (0, utils_1.userModelMapper)(updatedUser);
         });
     },
     deleteUser(id) {

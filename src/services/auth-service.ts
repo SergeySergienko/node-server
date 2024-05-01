@@ -1,13 +1,14 @@
 import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiError } from '../exceptions/api-error';
+import { CustomJwtPayload, UserInputModel, UserModel } from '../models';
 import { roleCollection, userCollection } from '../repositories';
-import { CustomJwtPayload, RoleModel, UserDto, UserModel } from '../types';
+import { userModelMapper } from '../utils';
 import mailService from './mail-service';
 import tokenService from './token-service';
 
 class AuthService {
-  async signup({ email, password: userPassword }: UserDto) {
+  async signup({ email, password: userPassword }: UserInputModel) {
     const candidate = await userCollection.findOne({ email });
     if (candidate) {
       throw ApiError.BadRequest(
@@ -39,14 +40,14 @@ class AuthService {
     };
     const { insertedId } = await userCollection.insertOne(newUser);
     if (!insertedId) throw ApiError.ServerError('Internal Server Error');
-
+    const userId = insertedId.toString();
     await mailService.sendActivationMail(email, identifier);
     const { password, ...user } = newUser;
     const tokens = tokenService.generateTokens({
       ...user,
-      _id: insertedId,
+      id: userId,
     });
-    await tokenService.saveToken(insertedId, tokens.refreshToken);
+    await tokenService.saveToken(userId, tokens.refreshToken);
 
     return {
       ...tokens,
@@ -54,7 +55,7 @@ class AuthService {
     };
   }
 
-  async login({ email, password: userPassword }: UserDto) {
+  async login({ email, password: userPassword }: UserInputModel) {
     const currentUser = await userCollection.findOne({ email });
     if (!currentUser) {
       throw ApiError.BadRequest(404, 'Incorrect username or password');
@@ -66,9 +67,9 @@ class AuthService {
     if (!isPasswordValid) {
       throw ApiError.BadRequest(404, 'Incorrect username or password');
     }
-    const { password, ...user } = currentUser;
+    const user = userModelMapper(currentUser);
     const tokens = tokenService.generateTokens(user);
-    await tokenService.saveToken(user._id, tokens.refreshToken);
+    await tokenService.saveToken(user.id, tokens.refreshToken);
 
     return {
       ...tokens,
@@ -107,8 +108,8 @@ class AuthService {
       throw ApiError.UnauthorizedError();
     }
 
-    const tokens = tokenService.generateTokens(user);
-    await tokenService.saveToken(user._id, tokens.refreshToken);
+    const tokens = tokenService.generateTokens(userModelMapper(user));
+    await tokenService.saveToken(userModelMapper(user).id, tokens.refreshToken);
 
     return {
       ...tokens,

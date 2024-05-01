@@ -20,7 +20,7 @@ exports.usersRepo = {
     },
     updateUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield _1.userCollection.updateOne({ _id: new mongodb_1.ObjectId(user._id) }, { $set: { roles: user.roles } });
+            return yield _1.userCollection.findOneAndUpdate({ _id: new mongodb_1.ObjectId(user.id) }, { $set: { roles: user.roles } }, { returnDocument: 'after' });
         });
     },
     deleteUser(id) {

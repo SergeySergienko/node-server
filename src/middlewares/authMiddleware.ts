@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { ApiError } from '../exceptions/api-error';
+import { CustomJwtPayload, RoleModel } from '../models';
 import tokenService from '../services/token-service';
-import { CustomJwtPayload, RoleModel } from '../types';
 
 export const authMiddleware =
   (roles: Array<RoleModel['value']>) =>

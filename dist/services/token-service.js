@@ -51,12 +51,12 @@ class TokenService {
     }
     saveToken(userId, refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
-            const tokenData = yield repositories_1.tokenCollection.findOne({ user: userId });
+            const tokenData = yield repositories_1.tokenCollection.findOne({ userId });
             if (tokenData) {
-                return yield repositories_1.tokenCollection.updateOne({ user: userId }, { $set: { refreshToken } });
+                return yield repositories_1.tokenCollection.updateOne({ userId }, { $set: { refreshToken } });
             }
             const token = yield repositories_1.tokenCollection.insertOne({
-                user: userId,
+                userId,
                 refreshToken,
             });
             return token;

@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import { RequestWithBody, RequestWithParams, UserDto } from '../types';
+import { RequestWithBody, RequestWithParams } from '../types';
 import authService from '../services/auth-service';
 import { ApiError } from '../exceptions/api-error';
+import { UserInputModel } from '../models';
 
 class AuthController {
   async signup(
-    req: RequestWithBody<UserDto>,
+    req: RequestWithBody<UserInputModel>,
     res: Response,
     next: NextFunction
   ) {
@@ -24,7 +25,7 @@ class AuthController {
   }
 
   async login(
-    req: RequestWithBody<UserDto>,
+    req: RequestWithBody<UserInputModel>,
     res: Response,
     next: NextFunction
   ) {
