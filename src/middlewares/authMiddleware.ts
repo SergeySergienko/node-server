@@ -10,6 +10,11 @@ export const authMiddleware =
       next();
     }
     try {
+      const { refreshToken } = req.cookies;
+      if (!refreshToken) {
+        throw ApiError.UnauthorizedError();
+      }
+
       const token = req.headers.authorization?.split(' ')[1];
       if (!token) {
         throw ApiError.UnauthorizedError();

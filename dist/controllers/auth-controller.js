@@ -23,7 +23,6 @@ class AuthController {
                     maxAge: 24 * 60 * 60 * 1000,
                     httpOnly: true,
                     sameSite: 'none',
-                    secure: true,
                 });
                 return res.status(201).json(userData);
             }
@@ -41,7 +40,6 @@ class AuthController {
                     maxAge: 24 * 60 * 60 * 1000,
                     httpOnly: true,
                     sameSite: 'none',
-                    secure: true,
                 });
                 return res.json(userData);
             }
@@ -92,7 +90,6 @@ class AuthController {
                     maxAge: 24 * 60 * 60 * 1000,
                     httpOnly: true,
                     sameSite: 'none',
-                    secure: true,
                 });
                 return res.json(userData);
             }
