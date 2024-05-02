@@ -8,13 +8,37 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runDb = exports.tokenCollection = exports.userCollection = exports.roleCollection = exports.productCollection = void 0;
+exports.runDb = exports.tokenCollection = exports.userCollection = exports.roleCollection = exports.productCollection = exports.upload = void 0;
 const mongodb_1 = require("mongodb");
+const multer_1 = __importDefault(require("multer"));
+const multer_gridfs_storage_1 = require("multer-gridfs-storage");
 require("dotenv/config");
 const user = process.env.mongodb_user;
 const passwort = process.env.mongodb_passwort;
 const uri = `mongodb+srv://${user}:${passwort}@cluster0.oqfu7vk.mongodb.net/?retryWrites=true&w=majority`;
+const url = `mongodb+srv://${user}:${passwort}@cluster0.oqfu7vk.mongodb.net/uploads`;
+const storage = new multer_gridfs_storage_1.GridFsStorage({
+    url,
+    file: (request, file) => {
+        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+            return {
+                bucketName: 'images',
+                filename: `${Date.now()}_${file.originalname}`,
+            };
+        }
+        else {
+            return {
+                bucketName: 'others',
+                filename: `${Date.now()}_${file.originalname}`,
+            };
+        }
+    },
+});
+exports.upload = (0, multer_1.default)({ storage });
 const client = new mongodb_1.MongoClient(uri, {
     serverApi: {
         version: mongodb_1.ServerApiVersion.v1,

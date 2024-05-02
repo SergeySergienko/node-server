@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser';
 
 import { getAuthRouter, getUsersRouter, getProductsRouter } from './routes';
 import { errorMiddleware } from './middlewares';
+import { upload } from './repositories';
 
 export const app = express();
 
@@ -24,4 +25,14 @@ app.use(errorMiddleware);
 
 app.get('/', (req: Request, res: Response) => {
   res.send(`<h1>Hello NodeJS</h1>`);
+});
+
+app.post('/upload', upload.single('file'), (req, res) => {
+  const file = req.file;
+  return res.json({
+    message: 'Uploaded',
+    id: file?.id,
+    name: file?.filename,
+    contentType: file?.mimetype,
+  });
 });
