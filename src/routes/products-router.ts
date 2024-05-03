@@ -1,15 +1,7 @@
-import express, { Request, Response } from 'express';
-import { productSevice } from '../services';
+import express from 'express';
+
 import productsController from '../controllers/products-controller';
 import { getValidationResult, authMiddleware } from '../middlewares';
-import {
-  GetProductParamsDto,
-  GetProductsQueryDto,
-  ProductViewModel,
-  RequestWithBody,
-  RequestWithParams,
-  RequestWithQuery,
-} from '../types';
 import {
   createProductValidator,
   deleteProductValidator,

@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.runDb = exports.tokenCollection = exports.userCollection = exports.roleCollection = exports.productCollection = exports.upload = void 0;
+exports.runDb = exports.imageCollection = exports.uploadsDB = exports.tokenCollection = exports.userCollection = exports.roleCollection = exports.productCollection = exports.upload = void 0;
 const mongodb_1 = require("mongodb");
 const multer_1 = __importDefault(require("multer"));
 const multer_gridfs_storage_1 = require("multer-gridfs-storage");
@@ -54,6 +54,8 @@ exports.userCollection = client.db('shop').collection('users');
 exports.tokenCollection = client
     .db('shop')
     .collection('tokens');
+exports.uploadsDB = client.db('uploads');
+exports.imageCollection = exports.uploadsDB.collection('images.files');
 function runDb() {
     return __awaiter(this, void 0, void 0, function* () {
         try {

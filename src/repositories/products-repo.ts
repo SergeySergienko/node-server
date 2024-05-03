@@ -1,6 +1,6 @@
 import { ObjectId } from 'mongodb';
+import { productCollection } from '.';
 import { ProductModel, UpdateProductDto } from '../types';
-import { productCollection } from './db';
 
 export const productsRepo = {
   async findProducts(title?: string) {

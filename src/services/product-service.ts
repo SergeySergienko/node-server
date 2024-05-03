@@ -7,9 +7,9 @@ import {
   UpdateProductDto,
 } from '../types';
 
-export const productSevice = {
+export const productService = {
   async findProducts(title?: string) {
-    const products = productsRepo.findProducts(title);
+    const products = await productsRepo.findProducts(title);
     if (!products) {
       throw ApiError.ServerError('Internal Server Error');
     }

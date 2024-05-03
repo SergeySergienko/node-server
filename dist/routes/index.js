@@ -17,4 +17,5 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __exportStar(require("./auth-router"), exports);
 __exportStar(require("./users-router"), exports);
 __exportStar(require("./products-router"), exports);
+__exportStar(require("./images-router"), exports);
 //# sourceMappingURL=index.js.map

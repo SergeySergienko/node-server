@@ -2,7 +2,12 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
-import { getAuthRouter, getUsersRouter, getProductsRouter } from './routes';
+import {
+  getAuthRouter,
+  getUsersRouter,
+  getProductsRouter,
+  getImagesRouter,
+} from './routes';
 import { errorMiddleware } from './middlewares';
 import { upload } from './repositories';
 
@@ -20,7 +25,8 @@ app
 app
   .use('/api/auth', getAuthRouter())
   .use('/api/users', getUsersRouter())
-  .use('/api/products', getProductsRouter());
+  .use('/api/products', getProductsRouter())
+  .use('/images', getImagesRouter());
 app.use(errorMiddleware);
 
 app.get('/', (req: Request, res: Response) => {

@@ -9,13 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.productSevice = void 0;
+exports.productService = void 0;
 const api_error_1 = require("../exceptions/api-error");
 const products_repo_1 = require("../repositories/products-repo");
-exports.productSevice = {
+exports.productService = {
     findProducts(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            const products = products_repo_1.productsRepo.findProducts(title);
+            const products = yield products_repo_1.productsRepo.findProducts(title);
             if (!products) {
                 throw api_error_1.ApiError.ServerError('Internal Server Error');
             }

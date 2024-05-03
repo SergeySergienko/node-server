@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
-import { productSevice } from '../services';
+import { productService } from '../services';
 import {
   CreateProductDto,
   GetProductParamsDto,
@@ -19,7 +19,7 @@ class ProductsController {
     next: NextFunction
   ) {
     try {
-      const products = await productSevice.findProducts(req.query.title);
+      const products = await productService.findProducts(req.query.title);
       return res.json(products);
     } catch (error) {
       next(error);
@@ -32,7 +32,7 @@ class ProductsController {
     next: NextFunction
   ) {
     try {
-      const product = await productSevice.findProductById(req.params.id);
+      const product = await productService.findProductById(req.params.id);
       return res.json(product);
     } catch (error) {
       next(error);
@@ -45,7 +45,7 @@ class ProductsController {
     next: NextFunction
   ) {
     try {
-      const product = await productSevice.createProduct(req.body);
+      const product = await productService.createProduct(req.body);
       return res.status(201).json(product);
     } catch (error) {
       next(error);
@@ -58,7 +58,7 @@ class ProductsController {
     next: NextFunction
   ) {
     try {
-      const product = await productSevice.updateProduct(req.body);
+      const product = await productService.updateProduct(req.body);
       return res.json(product);
     } catch (error) {
       next(error);
@@ -67,7 +67,7 @@ class ProductsController {
 
   async deleteProduct(req: Request, res: Response, next: NextFunction) {
     try {
-      const id = await productSevice.deleteProduct(req.params.id);
+      const id = await productService.deleteProduct(req.params.id);
       return res.json({ id, message: 'Product was deleted successfully' });
     } catch (error) {
       next(error);

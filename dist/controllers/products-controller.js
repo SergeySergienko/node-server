@@ -14,7 +14,7 @@ class ProductsController {
     findProducts(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const products = yield services_1.productSevice.findProducts(req.query.title);
+                const products = yield services_1.productService.findProducts(req.query.title);
                 return res.json(products);
             }
             catch (error) {
@@ -25,7 +25,7 @@ class ProductsController {
     findProductById(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const product = yield services_1.productSevice.findProductById(req.params.id);
+                const product = yield services_1.productService.findProductById(req.params.id);
                 return res.json(product);
             }
             catch (error) {
@@ -36,7 +36,7 @@ class ProductsController {
     createProduct(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const product = yield services_1.productSevice.createProduct(req.body);
+                const product = yield services_1.productService.createProduct(req.body);
                 return res.status(201).json(product);
             }
             catch (error) {
@@ -47,7 +47,7 @@ class ProductsController {
     updateProduct(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const product = yield services_1.productSevice.updateProduct(req.body);
+                const product = yield services_1.productService.updateProduct(req.body);
                 return res.json(product);
             }
             catch (error) {
@@ -58,7 +58,7 @@ class ProductsController {
     deleteProduct(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const id = yield services_1.productSevice.deleteProduct(req.params.id);
+                const id = yield services_1.productService.deleteProduct(req.params.id);
                 return res.json({ id, message: 'Product was deleted successfully' });
             }
             catch (error) {

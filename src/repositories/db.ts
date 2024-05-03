@@ -46,6 +46,8 @@ export const userCollection = client.db('shop').collection<UserModel>('users');
 export const tokenCollection = client
   .db('shop')
   .collection<TokenModel>('tokens');
+export const uploadsDB = client.db('uploads');
+export const imageCollection = uploadsDB.collection('images.files');
 
 export async function runDb() {
   try {

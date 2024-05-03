@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.productsRepo = void 0;
 const mongodb_1 = require("mongodb");
-const db_1 = require("./db");
+const _1 = require(".");
 exports.productsRepo = {
     findProducts(title) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -19,32 +19,32 @@ exports.productsRepo = {
             if (title) {
                 filter.title = { $regex: title };
             }
-            return yield db_1.productCollection.find(filter).toArray();
+            return yield _1.productCollection.find(filter).toArray();
         });
     },
     findProductById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.productCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
+            return yield _1.productCollection.findOne({ _id: new mongodb_1.ObjectId(id) });
         });
     },
     findProductByTitle(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.productCollection.findOne({ title });
+            return yield _1.productCollection.findOne({ title });
         });
     },
     createProduct(product) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.productCollection.insertOne(product);
+            return yield _1.productCollection.insertOne(product);
         });
     },
     updateProduct({ _id, price, title }) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.productCollection.updateOne({ _id: new mongodb_1.ObjectId(_id) }, { $set: { price, title } });
+            return yield _1.productCollection.updateOne({ _id: new mongodb_1.ObjectId(_id) }, { $set: { price, title } });
         });
     },
     deleteProduct(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield db_1.productCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+            return yield _1.productCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
         });
     },
 };

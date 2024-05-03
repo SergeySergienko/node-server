@@ -21,7 +21,8 @@ exports.app
 exports.app
     .use('/api/auth', (0, routes_1.getAuthRouter)())
     .use('/api/users', (0, routes_1.getUsersRouter)())
-    .use('/api/products', (0, routes_1.getProductsRouter)());
+    .use('/api/products', (0, routes_1.getProductsRouter)())
+    .use('/images', (0, routes_1.getImagesRouter)());
 exports.app.use(middlewares_1.errorMiddleware);
 exports.app.get('/', (req, res) => {
     res.send(`<h1>Hello NodeJS</h1>`);
