@@ -16,7 +16,7 @@ exports.app
     .use((0, cookie_parser_1.default)())
     .use((0, cors_1.default)({
     credentials: true,
-    origin: process.env.CLIENT_URL,
+    // origin: process.env.CLIENT_URL,
 }));
 exports.app
     .use('/api/auth', (0, routes_1.getAuthRouter)())
