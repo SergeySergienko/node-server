@@ -4,9 +4,9 @@ import { ProductModel, UpdateProductDto } from '../types';
 
 export const productsRepo = {
   async findProducts(title?: string) {
-    const filter: { FoodItem?: Record<'$regex', string> } = {};
+    const filter: { name?: Record<'$regex', string> } = {};
     if (title) {
-      filter.FoodItem = { $regex: title };
+      filter.name = { $regex: title };
     }
     return await productCollection.find(filter).toArray();
   },
@@ -16,7 +16,7 @@ export const productsRepo = {
   },
 
   async findProductByTitle(title: string) {
-    return await productCollection.findOne({ FoodItem: title });
+    return await productCollection.findOne({ name: title });
   },
 
   async createProduct(product: ProductModel) {

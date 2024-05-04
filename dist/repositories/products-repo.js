@@ -17,7 +17,7 @@ exports.productsRepo = {
         return __awaiter(this, void 0, void 0, function* () {
             const filter = {};
             if (title) {
-                filter.FoodItem = { $regex: title };
+                filter.name = { $regex: title };
             }
             return yield _1.productCollection.find(filter).toArray();
         });
@@ -29,7 +29,7 @@ exports.productsRepo = {
     },
     findProductByTitle(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield _1.productCollection.findOne({ FoodItem: title });
+            return yield _1.productCollection.findOne({ name: title });
         });
     },
     createProduct(product) {
