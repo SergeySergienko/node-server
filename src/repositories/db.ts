@@ -39,7 +39,7 @@ const client = new MongoClient(uri, {
 
 export const productCollection = client
   .db('shop')
-  .collection<ProductModel>('products');
+  .collection<ProductModel>('foods');
 
 export const roleCollection = client.db('shop').collection<RoleModel>('roles');
 export const userCollection = client.db('shop').collection<UserModel>('users');

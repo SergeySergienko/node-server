@@ -48,7 +48,7 @@ const client = new mongodb_1.MongoClient(uri, {
 });
 exports.productCollection = client
     .db('shop')
-    .collection('products');
+    .collection('foods');
 exports.roleCollection = client.db('shop').collection('roles');
 exports.userCollection = client.db('shop').collection('users');
 exports.tokenCollection = client

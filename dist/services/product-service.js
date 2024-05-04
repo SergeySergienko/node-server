@@ -31,14 +31,14 @@ exports.productService = {
             return product;
         });
     },
-    createProduct({ title, price }) {
+    createProduct({ FoodCategory, FoodItem, per100grams, Cals_per100grams, KJ_per100grams, }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const candidate = yield products_repo_1.productsRepo.findProductByTitle(title);
+            const candidate = yield products_repo_1.productsRepo.findProductByTitle(FoodItem);
             if (candidate) {
-                throw api_error_1.ApiError.BadRequest(409, `Product with title ${title} already exists`, [
+                throw api_error_1.ApiError.BadRequest(409, `Product with title ${FoodItem} already exists`, [
                     {
                         type: 'field',
-                        value: title,
+                        value: FoodItem,
                         msg: 'product title must be unique',
                         path: 'title',
                         location: 'body',
@@ -46,8 +46,11 @@ exports.productService = {
                 ]);
             }
             const newProduct = {
-                title,
-                price,
+                FoodCategory,
+                FoodItem,
+                per100grams,
+                Cals_per100grams,
+                KJ_per100grams,
             };
             const result = yield products_repo_1.productsRepo.createProduct(newProduct);
             if (!result.insertedId)

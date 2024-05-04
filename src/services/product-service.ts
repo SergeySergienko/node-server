@@ -24,16 +24,22 @@ export const productService = {
     return product;
   },
 
-  async createProduct({ title, price }: CreateProductDto) {
-    const candidate = await productsRepo.findProductByTitle(title);
+  async createProduct({
+    FoodCategory,
+    FoodItem,
+    per100grams,
+    Cals_per100grams,
+    KJ_per100grams,
+  }: CreateProductDto) {
+    const candidate = await productsRepo.findProductByTitle(FoodItem);
     if (candidate) {
       throw ApiError.BadRequest(
         409,
-        `Product with title ${title} already exists`,
+        `Product with title ${FoodItem} already exists`,
         [
           {
             type: 'field',
-            value: title,
+            value: FoodItem,
             msg: 'product title must be unique',
             path: 'title',
             location: 'body',
@@ -42,8 +48,11 @@ export const productService = {
       );
     }
     const newProduct: ProductModel = {
-      title,
-      price,
+      FoodCategory,
+      FoodItem,
+      per100grams,
+      Cals_per100grams,
+      KJ_per100grams,
     };
     const result = await productsRepo.createProduct(newProduct);
     if (!result.insertedId) throw ApiError.ServerError('Internal Server Error');

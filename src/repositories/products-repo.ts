@@ -4,9 +4,9 @@ import { ProductModel, UpdateProductDto } from '../types';
 
 export const productsRepo = {
   async findProducts(title?: string) {
-    const filter: { title?: Record<'$regex', string> } = {};
+    const filter: { FoodItem?: Record<'$regex', string> } = {};
     if (title) {
-      filter.title = { $regex: title };
+      filter.FoodItem = { $regex: title };
     }
     return await productCollection.find(filter).toArray();
   },
@@ -16,17 +16,32 @@ export const productsRepo = {
   },
 
   async findProductByTitle(title: string) {
-    return await productCollection.findOne({ title });
+    return await productCollection.findOne({ FoodItem: title });
   },
 
   async createProduct(product: ProductModel) {
     return await productCollection.insertOne(product);
   },
 
-  async updateProduct({ _id, price, title }: UpdateProductDto) {
+  async updateProduct({
+    _id,
+    FoodCategory,
+    FoodItem,
+    per100grams,
+    Cals_per100grams,
+    KJ_per100grams,
+  }: UpdateProductDto) {
     return await productCollection.updateOne(
       { _id: new ObjectId(_id) },
-      { $set: { price, title } }
+      {
+        $set: {
+          FoodCategory,
+          FoodItem,
+          per100grams,
+          Cals_per100grams,
+          KJ_per100grams,
+        },
+      }
     );
   },
 

@@ -9,23 +9,35 @@ export interface GetProductsQueryDto {
 }
 
 export interface CreateProductDto {
-  title: string;
-  price: number;
+  FoodCategory: string;
+  FoodItem: string;
+  per100grams: string;
+  Cals_per100grams: string;
+  KJ_per100grams: string;
 }
 
 export interface UpdateProductDto {
   _id: ObjectId;
-  title: string;
-  price: number;
+  FoodCategory: string;
+  FoodItem: string;
+  per100grams: string;
+  Cals_per100grams: string;
+  KJ_per100grams: string;
 }
 
 export interface ProductModel {
-  title: string;
-  price: number;
+  FoodCategory: string;
+  FoodItem: string;
+  per100grams: string;
+  Cals_per100grams: string;
+  KJ_per100grams: string;
 }
 
 export interface ProductViewModel {
   _id: ObjectId;
-  title: string;
-  price: number;
+  FoodCategory: string;
+  FoodItem: string;
+  per100grams: string;
+  Cals_per100grams: string;
+  KJ_per100grams: string;
 }

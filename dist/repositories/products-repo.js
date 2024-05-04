@@ -17,7 +17,7 @@ exports.productsRepo = {
         return __awaiter(this, void 0, void 0, function* () {
             const filter = {};
             if (title) {
-                filter.title = { $regex: title };
+                filter.FoodItem = { $regex: title };
             }
             return yield _1.productCollection.find(filter).toArray();
         });
@@ -29,7 +29,7 @@ exports.productsRepo = {
     },
     findProductByTitle(title) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield _1.productCollection.findOne({ title });
+            return yield _1.productCollection.findOne({ FoodItem: title });
         });
     },
     createProduct(product) {
@@ -37,9 +37,17 @@ exports.productsRepo = {
             return yield _1.productCollection.insertOne(product);
         });
     },
-    updateProduct({ _id, price, title }) {
+    updateProduct({ _id, FoodCategory, FoodItem, per100grams, Cals_per100grams, KJ_per100grams, }) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield _1.productCollection.updateOne({ _id: new mongodb_1.ObjectId(_id) }, { $set: { price, title } });
+            return yield _1.productCollection.updateOne({ _id: new mongodb_1.ObjectId(_id) }, {
+                $set: {
+                    FoodCategory,
+                    FoodItem,
+                    per100grams,
+                    Cals_per100grams,
+                    KJ_per100grams,
+                },
+            });
         });
     },
     deleteProduct(id) {
