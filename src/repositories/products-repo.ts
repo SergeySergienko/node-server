@@ -1,12 +1,12 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { productCollection } from '.';
-import { ProductModel, UpdateProductDto } from '../types';
+import { ProductModel } from '../types';
 
 export const productsRepo = {
   async findProducts(title?: string) {
-    const filter: { name?: Record<'$regex', string> } = {};
+    const filter: { name?: {} } = {};
     if (title) {
-      filter.name = { $regex: title };
+      filter.name = { $regex: title, $options: 'i' };
     }
     return await productCollection.find(filter).toArray();
   },
@@ -25,21 +25,21 @@ export const productsRepo = {
 
   async updateProduct({
     _id,
-    FoodCategory,
-    FoodItem,
-    per100grams,
-    Cals_per100grams,
-    KJ_per100grams,
-  }: UpdateProductDto) {
+    category,
+    name,
+    units,
+    caloriesPer100g,
+    kjPer100g,
+  }: WithId<ProductModel>) {
     return await productCollection.updateOne(
       { _id: new ObjectId(_id) },
       {
         $set: {
-          FoodCategory,
-          FoodItem,
-          per100grams,
-          Cals_per100grams,
-          KJ_per100grams,
+          category,
+          name,
+          units,
+          caloriesPer100g,
+          kjPer100g,
         },
       }
     );

@@ -1,11 +1,7 @@
+import { WithId } from 'mongodb';
 import { ApiError } from '../exceptions/api-error';
 import { productsRepo } from '../repositories/products-repo';
-import {
-  CreateProductDto,
-  ProductModel,
-  ProductViewModel,
-  UpdateProductDto,
-} from '../types';
+import { ProductModel } from '../types';
 
 export const productService = {
   async findProducts(title?: string) {
@@ -16,7 +12,7 @@ export const productService = {
     return products;
   },
 
-  async findProductById(id: string): Promise<ProductViewModel> {
+  async findProductById(id: string): Promise<WithId<ProductModel>> {
     const product = await productsRepo.findProductById(id);
     if (!product) {
       throw ApiError.NotFound(`Product with id: ${id} wasn't found`);
@@ -25,21 +21,21 @@ export const productService = {
   },
 
   async createProduct({
-    FoodCategory,
-    FoodItem,
-    per100grams,
-    Cals_per100grams,
-    KJ_per100grams,
-  }: CreateProductDto) {
-    const candidate = await productsRepo.findProductByTitle(FoodItem);
+    category,
+    name,
+    units,
+    caloriesPer100g,
+    kjPer100g,
+  }: ProductModel): Promise<WithId<ProductModel>> {
+    const candidate = await productsRepo.findProductByTitle(name);
     if (candidate) {
       throw ApiError.BadRequest(
         409,
-        `Product with title ${FoodItem} already exists`,
+        `Product with title ${name} already exists`,
         [
           {
             type: 'field',
-            value: FoodItem,
+            value: name,
             msg: 'product title must be unique',
             path: 'title',
             location: 'body',
@@ -47,12 +43,12 @@ export const productService = {
         ]
       );
     }
-    const newProduct: ProductModel = {
-      FoodCategory,
-      FoodItem,
-      per100grams,
-      Cals_per100grams,
-      KJ_per100grams,
+    const newProduct = {
+      category,
+      name,
+      units,
+      caloriesPer100g,
+      kjPer100g,
     };
     const result = await productsRepo.createProduct(newProduct);
     if (!result.insertedId) throw ApiError.ServerError('Internal Server Error');
@@ -60,7 +56,7 @@ export const productService = {
     return { ...newProduct, _id: result.insertedId };
   },
 
-  async updateProduct(product: UpdateProductDto) {
+  async updateProduct(product: WithId<ProductModel>) {
     const result = await productsRepo.updateProduct(product);
     if (result.matchedCount !== 1) {
       throw ApiError.NotFound(`Product with id: ${product._id} wasn't found`);

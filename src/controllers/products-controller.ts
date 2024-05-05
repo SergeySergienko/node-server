@@ -1,21 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
+import { WithId } from 'mongodb';
 
 import { productService } from '../services';
 import {
-  CreateProductDto,
   GetProductParamsDto,
   GetProductsQueryDto,
-  ProductViewModel,
+  ProductModel,
   RequestWithBody,
   RequestWithParams,
   RequestWithQuery,
-  UpdateProductDto,
 } from '../types';
 
 class ProductsController {
   async findProducts(
     req: RequestWithQuery<GetProductsQueryDto>,
-    res: Response<ProductViewModel[]>,
+    res: Response<WithId<ProductModel>[]>,
     next: NextFunction
   ) {
     try {
@@ -28,7 +27,7 @@ class ProductsController {
 
   async findProductById(
     req: RequestWithParams<GetProductParamsDto>,
-    res: Response<ProductViewModel>,
+    res: Response<WithId<ProductModel>>,
     next: NextFunction
   ) {
     try {
@@ -40,8 +39,8 @@ class ProductsController {
   }
 
   async createProduct(
-    req: RequestWithBody<CreateProductDto>,
-    res: Response<ProductViewModel>,
+    req: RequestWithBody<ProductModel>,
+    res: Response<WithId<ProductModel>>,
     next: NextFunction
   ) {
     try {
@@ -53,8 +52,8 @@ class ProductsController {
   }
 
   async updateProduct(
-    req: RequestWithBody<UpdateProductDto>,
-    res: Response<ProductViewModel>,
+    req: RequestWithBody<WithId<ProductModel>>,
+    res: Response<WithId<ProductModel>>,
     next: NextFunction
   ) {
     try {
