@@ -1,8 +1,6 @@
 import multer from 'multer';
 import { GridFsStorage } from 'multer-gridfs-storage';
-import 'dotenv/config';
-
-const url = process.env.mongo_upload_url as string;
+import { url } from '../repositories/constants';
 
 export const uploadMiddleware = () => {
   const storage = new GridFsStorage({

@@ -11,11 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runDb = exports.imageCollection = exports.uploadsDB = exports.tokenCollection = exports.userCollection = exports.roleCollection = exports.productCollection = void 0;
 const mongodb_1 = require("mongodb");
-require("dotenv/config");
-const user = process.env.mongodb_user;
-const password = process.env.mongodb_passwort;
-const uri = `mongodb+srv://${user}:${password}@cluster0.oqfu7vk.mongodb.net/?retryWrites=true&w=majority`;
-const client = new mongodb_1.MongoClient(uri, {
+const constants_1 = require("./constants");
+const client = new mongodb_1.MongoClient(constants_1.uri, {
     serverApi: {
         version: mongodb_1.ServerApiVersion.v1,
         strict: true,
