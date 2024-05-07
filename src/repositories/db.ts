@@ -3,7 +3,9 @@ import 'dotenv/config';
 import { ProductModel } from '../types';
 import { RoleModel, TokenModel, UserModel } from '../models';
 
-const uri = process.env.mongodb_uri || 'mongodb+srv://';
+const user = process.env.mongodb_user;
+const password = process.env.mongodb_passwort;
+const uri = `mongodb+srv://${user}:${password}@cluster0.oqfu7vk.mongodb.net/?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, {
   serverApi: {
