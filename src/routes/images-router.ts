@@ -7,7 +7,7 @@ export const getImagesRouter = () => {
 
   router.get('/', imagesController.findImages);
 
-  router.get('/download/:filename', imagesController.findImageByName);
+  router.get('/download/:filename', imagesController.downloadImageByName);
 
   return router;
 };

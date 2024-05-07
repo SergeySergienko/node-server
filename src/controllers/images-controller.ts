@@ -11,16 +11,18 @@ class ImagesController {
     }
   }
 
-  async findImageByName(req: Request, res: Response, next: NextFunction) {
+  async downloadImageByName(req: Request, res: Response, next: NextFunction) {
     try {
-      const downloadStream = await imageService.findImageByName(
-        req.params.filename
-      );
+      const { filename } = req.params;
+
+      const downloadStream = await imageService.downloadImageByName(filename);
       downloadStream.on('data', function (data) {
         return res.status(200).write(data);
       });
-      downloadStream.on('error', function (data) {
-        return res.status(404).send({ error: 'Image not found' });
+      downloadStream.on('error', function () {
+        return res
+          .status(404)
+          .send({ error: `Image with name: ${filename} not found` });
       });
       downloadStream.on('end', () => {
         return res.end();

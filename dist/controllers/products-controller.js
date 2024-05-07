@@ -13,8 +13,9 @@ const services_1 = require("../services");
 class ProductsController {
     findProducts(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { title, limit } = req.query;
             try {
-                const products = yield services_1.productService.findProducts(req.query.title);
+                const products = yield services_1.productService.findProducts({ title, limit });
                 return res.json(products);
             }
             catch (error) {

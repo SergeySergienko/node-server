@@ -2,7 +2,7 @@ import { ApiError } from '../exceptions/api-error';
 import { imagesRepo } from '../repositories';
 
 export const imageService = {
-  async findImages(title?: string) {
+  async findImages() {
     const images = await imagesRepo.findImages();
     if (!images) {
       throw ApiError.ServerError('Internal Server Error');
@@ -10,7 +10,7 @@ export const imageService = {
     return images;
   },
 
-  async findImageByName(filename: string) {
-    return await imagesRepo.findImageByName(filename);
+  async downloadImageByName(filename: string) {
+    return await imagesRepo.downloadImageByName(filename);
   },
 };

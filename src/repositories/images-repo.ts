@@ -6,7 +6,7 @@ export const imagesRepo = {
     return await imageCollection.find({}).toArray();
   },
 
-  async findImageByName(filename: string) {
+  async downloadImageByName(filename: string) {
     const imageBucket = new GridFSBucket(uploadsDB, {
       bucketName: 'images',
     });

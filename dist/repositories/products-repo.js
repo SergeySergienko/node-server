@@ -13,13 +13,17 @@ exports.productsRepo = void 0;
 const mongodb_1 = require("mongodb");
 const _1 = require(".");
 exports.productsRepo = {
-    findProducts(title) {
+    findProducts({ title, limit }) {
         return __awaiter(this, void 0, void 0, function* () {
             const filter = {};
+            const options = {};
             if (title) {
                 filter.name = { $regex: title, $options: 'i' };
             }
-            return yield _1.productCollection.find(filter).toArray();
+            if (limit) {
+                options.limit = +limit;
+            }
+            return yield _1.productCollection.find(filter, options).toArray();
         });
     },
     findProductById(id) {

@@ -18,7 +18,7 @@ exports.imagesRepo = {
             return yield _1.imageCollection.find({}).toArray();
         });
     },
-    findImageByName(filename) {
+    downloadImageByName(filename) {
         return __awaiter(this, void 0, void 0, function* () {
             const imageBucket = new mongodb_1.GridFSBucket(_1.uploadsDB, {
                 bucketName: 'images',

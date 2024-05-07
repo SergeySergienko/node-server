@@ -9,7 +9,7 @@ const images_controller_1 = __importDefault(require("../controllers/images-contr
 const getImagesRouter = () => {
     const router = express_1.default.Router();
     router.get('/', images_controller_1.default.findImages);
-    router.get('/download/:filename', images_controller_1.default.findImageByName);
+    router.get('/download/:filename', images_controller_1.default.downloadImageByName);
     return router;
 };
 exports.getImagesRouter = getImagesRouter;

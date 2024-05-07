@@ -22,15 +22,18 @@ class ImagesController {
             }
         });
     }
-    findImageByName(req, res, next) {
+    downloadImageByName(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const downloadStream = yield services_1.imageService.findImageByName(req.params.filename);
+                const { filename } = req.params;
+                const downloadStream = yield services_1.imageService.downloadImageByName(filename);
                 downloadStream.on('data', function (data) {
                     return res.status(200).write(data);
                 });
-                downloadStream.on('error', function (data) {
-                    return res.status(404).send({ error: 'Image not found' });
+                downloadStream.on('error', function () {
+                    return res
+                        .status(404)
+                        .send({ error: `Image with name: ${filename} not found` });
                 });
                 downloadStream.on('end', () => {
                     return res.end();

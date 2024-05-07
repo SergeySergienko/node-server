@@ -4,6 +4,7 @@ export interface GetProductParamsDto {
 
 export interface GetProductsQueryDto {
   title?: string;
+  limit?: string;
 }
 
 export interface ProductModel {

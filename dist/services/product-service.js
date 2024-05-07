@@ -13,9 +13,9 @@ exports.productService = void 0;
 const api_error_1 = require("../exceptions/api-error");
 const products_repo_1 = require("../repositories/products-repo");
 exports.productService = {
-    findProducts(title) {
+    findProducts({ title, limit }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const products = yield products_repo_1.productsRepo.findProducts(title);
+            const products = yield products_repo_1.productsRepo.findProducts({ title, limit });
             if (!products) {
                 throw api_error_1.ApiError.ServerError('Internal Server Error');
             }

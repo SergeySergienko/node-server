@@ -1,14 +1,20 @@
-import { ObjectId, WithId } from 'mongodb';
+import { Filter, FindOptions, ObjectId, WithId } from 'mongodb';
 import { productCollection } from '.';
-import { ProductModel } from '../types';
+import { GetProductsQueryDto, ProductModel } from '../types';
 
 export const productsRepo = {
-  async findProducts(title?: string) {
-    const filter: { name?: {} } = {};
+  async findProducts({ title, limit }: GetProductsQueryDto) {
+    const filter: Filter<ProductModel> = {};
+    const options: FindOptions = {};
+
     if (title) {
       filter.name = { $regex: title, $options: 'i' };
     }
-    return await productCollection.find(filter).toArray();
+    if (limit) {
+      options.limit = +limit;
+    }
+
+    return await productCollection.find(filter, options).toArray();
   },
 
   async findProductById(id: string) {

@@ -9,23 +9,30 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.imageService = void 0;
-const api_error_1 = require("../exceptions/api-error");
-const repositories_1 = require("../repositories");
-exports.imageService = {
-    findImages() {
+class UploadController {
+    uploadFiles(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const images = yield repositories_1.imagesRepo.findImages();
-            if (!images) {
-                throw api_error_1.ApiError.ServerError('Internal Server Error');
+            try {
+                const files = req.files;
+                if (!files) {
+                    return res.status(500).send({ error: 'Internal Server Error' });
+                }
+                const filesView = files.map(({ id, filename, contentType, uploadDate }) => ({
+                    id: id.toString(),
+                    name: filename,
+                    contentType,
+                    uploadDate,
+                }));
+                return res.json({
+                    message: `Uploaded ${filesView.length} files`,
+                    files: filesView,
+                });
             }
-            return images;
+            catch (error) {
+                next(error);
+            }
         });
-    },
-    downloadImageByName(filename) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return yield repositories_1.imagesRepo.downloadImageByName(filename);
-        });
-    },
-};
-//# sourceMappingURL=image-service.js.map
+    }
+}
+exports.default = new UploadController();
+//# sourceMappingURL=upload-controller.js.map

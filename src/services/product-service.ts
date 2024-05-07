@@ -1,11 +1,11 @@
 import { WithId } from 'mongodb';
 import { ApiError } from '../exceptions/api-error';
 import { productsRepo } from '../repositories/products-repo';
-import { ProductModel } from '../types';
+import { GetProductsQueryDto, ProductModel } from '../types';
 
 export const productService = {
-  async findProducts(title?: string) {
-    const products = await productsRepo.findProducts(title);
+  async findProducts({ title, limit }: GetProductsQueryDto) {
+    const products = await productsRepo.findProducts({ title, limit });
     if (!products) {
       throw ApiError.ServerError('Internal Server Error');
     }
