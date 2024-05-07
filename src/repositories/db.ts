@@ -3,7 +3,7 @@ import 'dotenv/config';
 import { ProductModel } from '../types';
 import { RoleModel, TokenModel, UserModel } from '../models';
 
-const uri = process.env.mongodb_uri as string;
+const uri = process.env.mongodb_uri || 'mongodb+srv://';
 
 const client = new MongoClient(uri, {
   serverApi: {

@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.runDb = exports.imageCollection = exports.uploadsDB = exports.tokenCollection = exports.userCollection = exports.roleCollection = exports.productCollection = void 0;
 const mongodb_1 = require("mongodb");
 require("dotenv/config");
-const uri = process.env.mongodb_uri;
+const uri = process.env.mongodb_uri || 'mongodb+srv://';
 const client = new mongodb_1.MongoClient(uri, {
     serverApi: {
         version: mongodb_1.ServerApiVersion.v1,
