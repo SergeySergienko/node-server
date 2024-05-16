@@ -15,29 +15,6 @@ const products_repo_1 = require("../repositories/products-repo");
 exports.productService = {
     findProducts({ title, limit, sortDirection }) {
         return __awaiter(this, void 0, void 0, function* () {
-            if (limit && isNaN(+limit)) {
-                throw api_error_1.ApiError.BadRequest(400, `Query parameter limit=${limit} is not a number`, [
-                    {
-                        type: 'field',
-                        value: limit,
-                        msg: 'query parameter limit must be a number',
-                        path: 'limit',
-                        location: 'query',
-                    },
-                ]);
-            }
-            if (sortDirection &&
-                !(sortDirection === 'asc' || sortDirection === 'desc')) {
-                throw api_error_1.ApiError.BadRequest(400, `Query parameter sortDirection=${sortDirection} must be asc or desc`, [
-                    {
-                        type: 'field',
-                        value: sortDirection,
-                        msg: 'query parameter sortDirection must be asc or desc',
-                        path: 'sortDirection',
-                        location: 'query',
-                    },
-                ]);
-            }
             const products = yield products_repo_1.productsRepo.findProducts({
                 title,
                 limit,

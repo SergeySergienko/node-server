@@ -1,4 +1,4 @@
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 
 const productIdValidator = body(
   '_id',
@@ -11,6 +11,24 @@ const productPriceValidator = body(
   'price',
   'the price must have numeric format'
 ).matches(/^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$/);
+
+const productLimitValidator = query(
+  'limit',
+  'query parameter limit must be a number'
+)
+  .default(1_000_000_000)
+  .isNumeric();
+const productSortDirectionValidator = query(
+  'sortDirection',
+  'query parameter sortDirection must be asc or desc'
+)
+  .default('asc')
+  .isIn(['asc', 'desc']);
+
+export const findProductsValidator = [
+  productLimitValidator,
+  productSortDirectionValidator,
+];
 
 export const createProductValidator = [
   productTitleValidator,

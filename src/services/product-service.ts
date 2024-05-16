@@ -5,41 +5,6 @@ import { GetProductsQueryDto, ProductModel } from '../types';
 
 export const productService = {
   async findProducts({ title, limit, sortDirection }: GetProductsQueryDto) {
-    if (limit && isNaN(+limit)) {
-      throw ApiError.BadRequest(
-        400,
-        `Query parameter limit=${limit} is not a number`,
-        [
-          {
-            type: 'field',
-            value: limit,
-            msg: 'query parameter limit must be a number',
-            path: 'limit',
-            location: 'query',
-          },
-        ]
-      );
-    }
-
-    if (
-      sortDirection &&
-      !(sortDirection === 'asc' || sortDirection === 'desc')
-    ) {
-      throw ApiError.BadRequest(
-        400,
-        `Query parameter sortDirection=${sortDirection} must be asc or desc`,
-        [
-          {
-            type: 'field',
-            value: sortDirection,
-            msg: 'query parameter sortDirection must be asc or desc',
-            path: 'sortDirection',
-            location: 'query',
-          },
-        ]
-      );
-    }
-
     const products = await productsRepo.findProducts({
       title,
       limit,

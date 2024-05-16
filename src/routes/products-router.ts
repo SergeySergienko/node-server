@@ -5,13 +5,19 @@ import { getValidationResult, authMiddleware } from '../middlewares';
 import {
   createProductValidator,
   deleteProductValidator,
+  findProductsValidator,
   updateProductValidator,
 } from '../validators';
 
 export const getProductsRouter = () => {
   const router = express.Router();
 
-  router.get('/', productsController.findProducts);
+  router.get(
+    '/',
+    findProductsValidator,
+    getValidationResult,
+    productsController.findProducts
+  );
 
   router.get('/:id', productsController.findProductById);
 
