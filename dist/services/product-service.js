@@ -16,6 +16,17 @@ exports.productService = {
     findProducts({ title, limit }) {
         return __awaiter(this, void 0, void 0, function* () {
             const products = yield products_repo_1.productsRepo.findProducts({ title, limit });
+            if (limit && isNaN(+limit)) {
+                throw api_error_1.ApiError.BadRequest(400, `Query parameter limit=${limit} is not a number`, [
+                    {
+                        type: 'field',
+                        value: limit,
+                        msg: 'query parameter limit must be a number',
+                        path: 'limit',
+                        location: 'query',
+                    },
+                ]);
+            }
             if (!products) {
                 throw api_error_1.ApiError.ServerError('Internal Server Error');
             }

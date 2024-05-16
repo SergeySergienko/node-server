@@ -5,7 +5,24 @@ import { GetProductsQueryDto, ProductModel } from '../types';
 
 export const productService = {
   async findProducts({ title, limit }: GetProductsQueryDto) {
+    if (limit && isNaN(+limit)) {
+      throw ApiError.BadRequest(
+        400,
+        `Query parameter limit=${limit} is not a number`,
+        [
+          {
+            type: 'field',
+            value: limit,
+            msg: 'query parameter limit must be a number',
+            path: 'limit',
+            location: 'query',
+          },
+        ]
+      );
+    }
+
     const products = await productsRepo.findProducts({ title, limit });
+
     if (!products) {
       throw ApiError.ServerError('Internal Server Error');
     }
