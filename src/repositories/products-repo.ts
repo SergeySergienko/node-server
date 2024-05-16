@@ -3,7 +3,7 @@ import { productCollection } from '.';
 import { GetProductsQueryDto, ProductModel } from '../types';
 
 export const productsRepo = {
-  async findProducts({ title, limit }: GetProductsQueryDto) {
+  async findProducts({ title, limit, sortDirection }: GetProductsQueryDto) {
     const filter: Filter<ProductModel> = {};
     const options: FindOptions = {};
 
@@ -13,6 +13,7 @@ export const productsRepo = {
     if (limit) {
       options.limit = +limit;
     }
+    options.sort = { name: sortDirection || 'asc' };
 
     return await productCollection.find(filter, options).toArray();
   },

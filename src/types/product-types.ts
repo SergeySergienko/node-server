@@ -5,6 +5,7 @@ export interface GetProductParamsDto {
 export interface GetProductsQueryDto {
   title?: string;
   limit?: string;
+  sortDirection?: 'asc' | 'desc';
 }
 
 export interface ProductModel {

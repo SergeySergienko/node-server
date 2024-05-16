@@ -4,7 +4,7 @@ import { productsRepo } from '../repositories/products-repo';
 import { GetProductsQueryDto, ProductModel } from '../types';
 
 export const productService = {
-  async findProducts({ title, limit }: GetProductsQueryDto) {
+  async findProducts({ title, limit, sortDirection }: GetProductsQueryDto) {
     if (limit && isNaN(+limit)) {
       throw ApiError.BadRequest(
         400,
@@ -21,7 +21,30 @@ export const productService = {
       );
     }
 
-    const products = await productsRepo.findProducts({ title, limit });
+    if (
+      sortDirection &&
+      !(sortDirection === 'asc' || sortDirection === 'desc')
+    ) {
+      throw ApiError.BadRequest(
+        400,
+        `Query parameter sortDirection=${sortDirection} must be asc or desc`,
+        [
+          {
+            type: 'field',
+            value: sortDirection,
+            msg: 'query parameter sortDirection must be asc or desc',
+            path: 'sortDirection',
+            location: 'query',
+          },
+        ]
+      );
+    }
+
+    const products = await productsRepo.findProducts({
+      title,
+      limit,
+      sortDirection,
+    });
 
     if (!products) {
       throw ApiError.ServerError('Internal Server Error');

@@ -13,7 +13,7 @@ exports.productsRepo = void 0;
 const mongodb_1 = require("mongodb");
 const _1 = require(".");
 exports.productsRepo = {
-    findProducts({ title, limit }) {
+    findProducts({ title, limit, sortDirection }) {
         return __awaiter(this, void 0, void 0, function* () {
             const filter = {};
             const options = {};
@@ -23,6 +23,7 @@ exports.productsRepo = {
             if (limit) {
                 options.limit = +limit;
             }
+            options.sort = { name: sortDirection || 'asc' };
             return yield _1.productCollection.find(filter, options).toArray();
         });
     },

@@ -17,9 +17,13 @@ class ProductsController {
     res: Response<WithId<ProductModel>[]>,
     next: NextFunction
   ) {
-    const { title, limit } = req.query;
+    const { title, limit, sortDirection } = req.query;
     try {
-      const products = await productService.findProducts({ title, limit });
+      const products = await productService.findProducts({
+        title,
+        limit,
+        sortDirection,
+      });
       return res.json(products);
     } catch (error) {
       next(error);
