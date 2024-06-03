@@ -10,8 +10,8 @@ class ApiError extends Error {
     static UnauthorizedError() {
         return new ApiError(401, 'User is not authorized');
     }
-    static ForbiddenError() {
-        return new ApiError(403, 'No access to resource');
+    static ForbiddenError(message) {
+        return new ApiError(403, message);
     }
     static BadRequest(status, message, errors = []) {
         return new ApiError(status, message, errors);

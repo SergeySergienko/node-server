@@ -14,8 +14,8 @@ export class ApiError extends Error {
     return new ApiError(401, 'User is not authorized');
   }
 
-  static ForbiddenError() {
-    return new ApiError(403, 'No access to resource');
+  static ForbiddenError(message: string) {
+    return new ApiError(403, message);
   }
 
   static BadRequest(

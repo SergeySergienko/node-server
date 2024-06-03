@@ -33,7 +33,7 @@ export const authMiddleware =
         }
       });
       if (!hasRole) {
-        throw ApiError.ForbiddenError();
+        throw ApiError.ForbiddenError('No access to resource');
       }
       next();
     } catch (error) {

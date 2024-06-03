@@ -67,6 +67,9 @@ class AuthService {
     if (!isPasswordValid) {
       throw ApiError.BadRequest(404, 'Incorrect username or password');
     }
+    if (!currentUser.isActivated || currentUser.activationLink) {
+      throw ApiError.ForbiddenError('Account has not yet been activated');
+    }
     const user = userModelMapper(currentUser);
     const tokens = tokenService.generateTokens(user);
     await tokenService.saveToken(user.id, tokens.refreshToken);

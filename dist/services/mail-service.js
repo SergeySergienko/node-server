@@ -13,14 +13,30 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
+const api_error_1 = require("../exceptions/api-error");
 class MailService {
     constructor() {
-        this.transporter = nodemailer_1.default.createTransport({});
+        this.transport = nodemailer_1.default.createTransport({
+            service: 'gmail',
+            auth: {
+                user: process.env.smtp_user,
+                pass: process.env.smtp_pass,
+            },
+        });
     }
-    sendActivationMail(to, link) {
+    sendActivationMail(to, identifier) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(`Activation Email sent to ${to}`);
-            // await this.transporter.sendMail({});
+            try {
+                yield this.transport.sendMail({
+                    from: `no-reply <${process.env.smtp_user}>`,
+                    to,
+                    subject: 'Account activation',
+                    html: `Follow this <a href="${process.env.CLIENT_URL}/email-confirmation/${identifier}">link</a> to verify your email address`,
+                });
+            }
+            catch (error) {
+                throw api_error_1.ApiError.ServerError('Internal Server Error');
+            }
         });
     }
 }

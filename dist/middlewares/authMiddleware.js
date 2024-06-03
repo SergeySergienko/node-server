@@ -31,7 +31,7 @@ const authMiddleware = (roles) => (req, res, next) => {
             }
         });
         if (!hasRole) {
-            throw api_error_1.ApiError.ForbiddenError();
+            throw api_error_1.ApiError.ForbiddenError('No access to resource');
         }
         next();
     }
