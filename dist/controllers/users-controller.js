@@ -25,7 +25,8 @@ class UsersController {
     updateUser(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const user = yield services_1.userService.updateUser(req.body);
+                const { refreshToken } = req.cookies;
+                const user = yield services_1.userService.updateUser(refreshToken, Object.assign({}, req.body));
                 return res.json(user);
             }
             catch (error) {

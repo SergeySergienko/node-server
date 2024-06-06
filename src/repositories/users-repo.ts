@@ -1,9 +1,12 @@
 import { ObjectId } from 'mongodb';
 import { roleCollection, userCollection } from '.';
-import { RoleModel, UserModel, UserOutputModel } from '../models';
+import { RoleModel, UserOutputModel, UserUpdateModel } from '../models';
 
 export const usersRepo = {
-  async findUser<T extends keyof UserModel>(field: T, value: UserModel[T]) {
+  async findUser<T extends keyof UserOutputModel>(
+    field: T,
+    value: UserOutputModel[T]
+  ) {
     return await userCollection.findOne({ [field]: value });
   },
 
@@ -11,10 +14,10 @@ export const usersRepo = {
     return await userCollection.find({}).toArray();
   },
 
-  async updateUser(user: UserOutputModel) {
+  async updateUser({ id, roles }: UserUpdateModel) {
     const result = await userCollection.findOneAndUpdate(
-      { _id: new ObjectId(user.id) },
-      { $set: { roles: user.roles } },
+      { _id: new ObjectId(id) },
+      { $set: { roles } },
       { returnDocument: 'after' }
     );
     return result.value;

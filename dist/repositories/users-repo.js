@@ -23,9 +23,9 @@ exports.usersRepo = {
             return yield _1.userCollection.find({}).toArray();
         });
     },
-    updateUser(user) {
+    updateUser({ id, roles }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const result = yield _1.userCollection.findOneAndUpdate({ _id: new mongodb_1.ObjectId(user.id) }, { $set: { roles: user.roles } }, { returnDocument: 'after' });
+            const result = yield _1.userCollection.findOneAndUpdate({ _id: new mongodb_1.ObjectId(id) }, { $set: { roles } }, { returnDocument: 'after' });
             return result.value;
         });
     },

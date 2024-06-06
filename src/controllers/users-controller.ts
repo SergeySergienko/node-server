@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserOutputModel } from '../models';
+import { UserOutputModel, UserUpdateModel } from '../models';
 import { userService } from '../services';
 import { RequestWithBody } from '../types';
 
@@ -18,12 +18,14 @@ class UsersController {
   }
 
   async updateUser(
-    req: RequestWithBody<UserOutputModel>,
+    req: RequestWithBody<UserUpdateModel>,
     res: Response<UserOutputModel>,
     next: NextFunction
   ) {
     try {
-      const user = await userService.updateUser(req.body);
+      const { refreshToken } = req.cookies;
+
+      const user = await userService.updateUser(refreshToken, { ...req.body });
       return res.json(user);
     } catch (error) {
       next(error);

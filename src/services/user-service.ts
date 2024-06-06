@@ -1,7 +1,8 @@
 import { ApiError } from '../exceptions/api-error';
-import { UserOutputModel } from '../models';
+import { CustomJwtPayload, UserOutputModel, UserUpdateModel } from '../models';
 import { usersRepo } from '../repositories';
 import { userModelMapper } from '../utils';
+import tokenService from './token-service';
 
 export const userService = {
   async findUsers() {
@@ -13,10 +14,21 @@ export const userService = {
     return usersForView;
   },
 
-  async updateUser(user: UserOutputModel) {
-    const updatedUser = await usersRepo.updateUser(user);
+  async updateUser(refreshToken: string, userDataToUpdate: UserUpdateModel) {
+    const userData =
+      tokenService.validateRefreshToken<CustomJwtPayload>(refreshToken);
+
+    if (userDataToUpdate.id === userData?.id) {
+      throw ApiError.ForbiddenError(
+        'User is not allowed to update their roles'
+      );
+    }
+
+    const updatedUser = await usersRepo.updateUser(userDataToUpdate);
     if (!updatedUser) {
-      throw ApiError.NotFound(`User with id: ${user.id} wasn't found`);
+      throw ApiError.NotFound(
+        `User with id: ${userDataToUpdate.id} wasn't found`
+      );
     }
     return userModelMapper(updatedUser);
   },

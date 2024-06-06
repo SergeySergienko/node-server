@@ -15,6 +15,11 @@ export interface UserOutputModel extends Omit<UserModel, 'password'> {
   id: string;
 }
 
+export interface UserUpdateModel {
+  id: string;
+  roles: Array<RoleModel['value']>;
+}
+
 export type RoleModel = {
   value: 'USER' | 'ADMIN' | 'OWNER';
 };
