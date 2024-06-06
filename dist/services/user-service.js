@@ -28,7 +28,7 @@ exports.userService = {
         return __awaiter(this, void 0, void 0, function* () {
             const updatedUser = yield repositories_1.usersRepo.updateUser(user);
             if (!updatedUser) {
-                throw api_error_1.ApiError.NotFound(`Product with id: ${user.id} wasn't found`);
+                throw api_error_1.ApiError.NotFound(`User with id: ${user.id} wasn't found`);
             }
             return (0, utils_1.userModelMapper)(updatedUser);
         });

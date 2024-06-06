@@ -13,6 +13,11 @@ exports.usersRepo = void 0;
 const mongodb_1 = require("mongodb");
 const _1 = require(".");
 exports.usersRepo = {
+    findUser(field, value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield _1.userCollection.findOne({ [field]: value });
+        });
+    },
     findUsers() {
         return __awaiter(this, void 0, void 0, function* () {
             return yield _1.userCollection.find({}).toArray();
@@ -20,12 +25,20 @@ exports.usersRepo = {
     },
     updateUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield _1.userCollection.findOneAndUpdate({ _id: new mongodb_1.ObjectId(user.id) }, { $set: { roles: user.roles } }, { returnDocument: 'after' });
+            const result = yield _1.userCollection.findOneAndUpdate({ _id: new mongodb_1.ObjectId(user.id) }, { $set: { roles: user.roles } }, { returnDocument: 'after' });
+            return result.value;
         });
     },
     deleteUser(id) {
         return __awaiter(this, void 0, void 0, function* () {
             return yield _1.userCollection.deleteOne({ _id: new mongodb_1.ObjectId(id) });
+        });
+    },
+    findRole(value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield _1.roleCollection.findOne({
+                value,
+            });
         });
     },
 };

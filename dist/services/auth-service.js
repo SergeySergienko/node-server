@@ -8,17 +8,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __rest = (this && this.__rest) || function (s, e) {
-    var t = {};
-    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
-        t[p] = s[p];
-    if (s != null && typeof Object.getOwnPropertySymbols === "function")
-        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
-            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
-                t[p[i]] = s[p[i]];
-        }
-    return t;
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -30,10 +19,11 @@ const repositories_1 = require("../repositories");
 const utils_1 = require("../utils");
 const mail_service_1 = __importDefault(require("./mail-service"));
 const token_service_1 = __importDefault(require("./token-service"));
+const auth_repo_1 = require("../repositories/auth-repo");
 class AuthService {
     signup({ email, password: userPassword }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const candidate = yield repositories_1.userCollection.findOne({ email });
+            const candidate = yield repositories_1.usersRepo.findUser('email', email);
             if (candidate) {
                 throw api_error_1.ApiError.BadRequest(409, `User with email ${email} already exists`, [
                     {
@@ -45,9 +35,7 @@ class AuthService {
                     },
                 ]);
             }
-            const userRole = yield repositories_1.roleCollection.findOne({
-                value: 'OWNER',
-            });
+            const userRole = yield repositories_1.usersRepo.findRole('ADMIN');
             if (!userRole)
                 throw api_error_1.ApiError.NotFound('User role not found');
             const hashPassword = yield bcrypt_1.default.hash(userPassword, 7);
@@ -59,20 +47,16 @@ class AuthService {
                 activationLink: identifier,
                 isActivated: false,
             };
-            const { insertedId } = yield repositories_1.userCollection.insertOne(newUser);
+            const { insertedId } = yield auth_repo_1.authRepo.createUser(newUser);
             if (!insertedId)
-                throw api_error_1.ApiError.ServerError('Internal Server Error');
-            const userId = insertedId.toString();
+                throw api_error_1.ApiError.ServerError('User was not inserted');
             yield mail_service_1.default.sendActivationMail(email, identifier);
-            const { password } = newUser, user = __rest(newUser, ["password"]);
-            const tokens = token_service_1.default.generateTokens(Object.assign(Object.assign({}, user), { id: userId }));
-            yield token_service_1.default.saveToken(userId, tokens.refreshToken);
-            return Object.assign(Object.assign({}, tokens), { user });
+            return (0, utils_1.userModelMapper)(Object.assign(Object.assign({}, newUser), { _id: insertedId }));
         });
     }
     login({ email, password: userPassword }) {
         return __awaiter(this, void 0, void 0, function* () {
-            const currentUser = yield repositories_1.userCollection.findOne({ email });
+            const currentUser = yield repositories_1.usersRepo.findUser('email', email);
             if (!currentUser) {
                 throw api_error_1.ApiError.BadRequest(404, 'Incorrect username or password');
             }
@@ -83,25 +67,28 @@ class AuthService {
             if (!currentUser.isActivated || currentUser.activationLink) {
                 throw api_error_1.ApiError.ForbiddenError('Account has not yet been activated');
             }
-            const user = (0, utils_1.userModelMapper)(currentUser);
-            const tokens = token_service_1.default.generateTokens(user);
-            yield token_service_1.default.saveToken(user.id, tokens.refreshToken);
-            return Object.assign(Object.assign({}, tokens), { user });
+            return (0, utils_1.getUserWithTokens)(currentUser);
         });
     }
     logout(refreshToken) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield token_service_1.default.removeToken(refreshToken);
+            const { deletedCount } = yield token_service_1.default.removeToken(refreshToken);
+            if (deletedCount !== 1) {
+                throw api_error_1.ApiError.NotFound('Logout Error');
+            }
         });
     }
     activate(activationLink) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield repositories_1.userCollection.findOne({ activationLink });
-            if (!user) {
+            const currentUser = yield repositories_1.usersRepo.findUser('activationLink', activationLink);
+            if (!currentUser) {
                 throw api_error_1.ApiError.BadRequest(400, 'Activation link is incorrect');
             }
-            const result = yield repositories_1.userCollection.updateOne({ activationLink }, { $set: { isActivated: true }, $unset: { activationLink: '' } });
-            return result.matchedCount === 1;
+            const result = yield auth_repo_1.authRepo.activateUser(activationLink);
+            if (!result.value) {
+                throw api_error_1.ApiError.ServerError('User was not activated');
+            }
+            return (0, utils_1.getUserWithTokens)(result.value);
         });
     }
     refresh(refreshToken) {
@@ -114,13 +101,11 @@ class AuthService {
             if (!userData || !tokenFromDb) {
                 throw api_error_1.ApiError.UnauthorizedError();
             }
-            const user = yield repositories_1.userCollection.findOne({ email: userData.email });
-            if (!user) {
+            const currentUser = yield repositories_1.usersRepo.findUser('email', userData.email);
+            if (!currentUser) {
                 throw api_error_1.ApiError.UnauthorizedError();
             }
-            const tokens = token_service_1.default.generateTokens((0, utils_1.userModelMapper)(user));
-            yield token_service_1.default.saveToken((0, utils_1.userModelMapper)(user).id, tokens.refreshToken);
-            return Object.assign(Object.assign({}, tokens), { user });
+            return (0, utils_1.getUserWithTokens)(currentUser);
         });
     }
 }

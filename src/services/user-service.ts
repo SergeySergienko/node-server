@@ -13,10 +13,10 @@ export const userService = {
     return usersForView;
   },
 
-  async updateUser(user: UserOutputModel): Promise<UserOutputModel> {
+  async updateUser(user: UserOutputModel) {
     const updatedUser = await usersRepo.updateUser(user);
     if (!updatedUser) {
-      throw ApiError.NotFound(`Product with id: ${user.id} wasn't found`);
+      throw ApiError.NotFound(`User with id: ${user.id} wasn't found`);
     }
     return userModelMapper(updatedUser);
   },

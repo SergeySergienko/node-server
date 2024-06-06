@@ -13,17 +13,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const auth_service_1 = __importDefault(require("../services/auth-service"));
-const api_error_1 = require("../exceptions/api-error");
+const utils_1 = require("../utils");
 class AuthController {
     signup(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const userData = yield auth_service_1.default.signup(req.body);
-                res.cookie('refreshToken', userData.refreshToken, {
-                    maxAge: 24 * 60 * 60 * 1000,
-                    httpOnly: true,
-                    sameSite: 'none',
-                });
                 return res.status(201).json(userData);
             }
             catch (error) {
@@ -36,11 +31,7 @@ class AuthController {
             try {
                 const { email, password } = req.body;
                 const userData = yield auth_service_1.default.login({ email, password });
-                res.cookie('refreshToken', userData.refreshToken, {
-                    maxAge: 24 * 60 * 60 * 1000,
-                    httpOnly: true,
-                    sameSite: 'none',
-                });
+                (0, utils_1.setCookie)(res, 'refreshToken', userData.refreshToken);
                 return res.json(userData);
             }
             catch (error) {
@@ -52,14 +43,9 @@ class AuthController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const { refreshToken } = req.cookies;
-                const { deletedCount } = yield auth_service_1.default.logout(refreshToken);
-                if (deletedCount === 1) {
-                    res.clearCookie('refreshToken');
-                    return res
-                        .status(200)
-                        .json({ message: 'User successfully logged out' });
-                }
-                throw api_error_1.ApiError.NotFound('Logout Error');
+                yield auth_service_1.default.logout(refreshToken);
+                res.clearCookie('refreshToken');
+                return res.json({ message: 'User successfully logged out' });
             }
             catch (error) {
                 next(error);
@@ -70,11 +56,9 @@ class AuthController {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const activationLink = req.params.link;
-                const isActivated = yield auth_service_1.default.activate(activationLink);
-                if (!isActivated) {
-                    return res.sendStatus(500);
-                }
-                return res.json({ message: 'User activated' });
+                const userData = yield auth_service_1.default.activate(activationLink);
+                (0, utils_1.setCookie)(res, 'refreshToken', userData.refreshToken);
+                return res.json(userData);
             }
             catch (error) {
                 next(error);
@@ -86,11 +70,7 @@ class AuthController {
             try {
                 const { refreshToken } = req.cookies;
                 const userData = yield auth_service_1.default.refresh(refreshToken);
-                res.cookie('refreshToken', userData.refreshToken, {
-                    maxAge: 24 * 60 * 60 * 1000,
-                    httpOnly: true,
-                    sameSite: 'none',
-                });
+                (0, utils_1.setCookie)(res, 'refreshToken', userData.refreshToken);
                 return res.json(userData);
             }
             catch (error) {

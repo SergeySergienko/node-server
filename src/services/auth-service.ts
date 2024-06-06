@@ -2,14 +2,15 @@ import bcrypt from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { ApiError } from '../exceptions/api-error';
 import { CustomJwtPayload, UserInputModel, UserModel } from '../models';
-import { roleCollection, userCollection } from '../repositories';
-import { userModelMapper } from '../utils';
+import { usersRepo } from '../repositories';
+import { getUserWithTokens, userModelMapper } from '../utils';
 import mailService from './mail-service';
 import tokenService from './token-service';
+import { authRepo } from '../repositories/auth-repo';
 
 class AuthService {
   async signup({ email, password: userPassword }: UserInputModel) {
-    const candidate = await userCollection.findOne({ email });
+    const candidate = await usersRepo.findUser('email', email);
     if (candidate) {
       throw ApiError.BadRequest(
         409,
@@ -25,10 +26,10 @@ class AuthService {
         ]
       );
     }
-    const userRole = await roleCollection.findOne({
-      value: 'OWNER',
-    });
+
+    const userRole = await usersRepo.findRole('ADMIN');
     if (!userRole) throw ApiError.NotFound('User role not found');
+
     const hashPassword = await bcrypt.hash(userPassword, 7);
     const identifier = uuidv4();
     const newUser: UserModel = {
@@ -38,25 +39,15 @@ class AuthService {
       activationLink: identifier,
       isActivated: false,
     };
-    const { insertedId } = await userCollection.insertOne(newUser);
-    if (!insertedId) throw ApiError.ServerError('Internal Server Error');
-    const userId = insertedId.toString();
+    const { insertedId } = await authRepo.createUser(newUser);
+    if (!insertedId) throw ApiError.ServerError('User was not inserted');
     await mailService.sendActivationMail(email, identifier);
-    const { password, ...user } = newUser;
-    const tokens = tokenService.generateTokens({
-      ...user,
-      id: userId,
-    });
-    await tokenService.saveToken(userId, tokens.refreshToken);
 
-    return {
-      ...tokens,
-      user,
-    };
+    return userModelMapper({ ...newUser, _id: insertedId });
   }
 
   async login({ email, password: userPassword }: UserInputModel) {
-    const currentUser = await userCollection.findOne({ email });
+    const currentUser = await usersRepo.findUser('email', email);
     if (!currentUser) {
       throw ApiError.BadRequest(404, 'Incorrect username or password');
     }
@@ -70,30 +61,31 @@ class AuthService {
     if (!currentUser.isActivated || currentUser.activationLink) {
       throw ApiError.ForbiddenError('Account has not yet been activated');
     }
-    const user = userModelMapper(currentUser);
-    const tokens = tokenService.generateTokens(user);
-    await tokenService.saveToken(user.id, tokens.refreshToken);
-
-    return {
-      ...tokens,
-      user,
-    };
+    return getUserWithTokens(currentUser);
   }
 
   async logout(refreshToken: string) {
-    return await tokenService.removeToken(refreshToken);
+    const { deletedCount } = await tokenService.removeToken(refreshToken);
+    if (deletedCount !== 1) {
+      throw ApiError.NotFound('Logout Error');
+    }
   }
 
   async activate(activationLink: string) {
-    const user = await userCollection.findOne({ activationLink });
-    if (!user) {
+    const currentUser = await usersRepo.findUser(
+      'activationLink',
+      activationLink
+    );
+    if (!currentUser) {
       throw ApiError.BadRequest(400, 'Activation link is incorrect');
     }
-    const result = await userCollection.updateOne(
-      { activationLink },
-      { $set: { isActivated: true }, $unset: { activationLink: '' } }
-    );
-    return result.matchedCount === 1;
+    const result = await authRepo.activateUser(activationLink);
+
+    if (!result.value) {
+      throw ApiError.ServerError('User was not activated');
+    }
+
+    return getUserWithTokens(result.value);
   }
 
   async refresh(refreshToken: string) {
@@ -106,18 +98,12 @@ class AuthService {
     if (!userData || !tokenFromDb) {
       throw ApiError.UnauthorizedError();
     }
-    const user = await userCollection.findOne({ email: userData.email });
-    if (!user) {
+    const currentUser = await usersRepo.findUser('email', userData.email);
+    if (!currentUser) {
       throw ApiError.UnauthorizedError();
     }
 
-    const tokens = tokenService.generateTokens(userModelMapper(user));
-    await tokenService.saveToken(userModelMapper(user).id, tokens.refreshToken);
-
-    return {
-      ...tokens,
-      user,
-    };
+    return getUserWithTokens(currentUser);
   }
 }
 
