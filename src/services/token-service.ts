@@ -8,7 +8,7 @@ class TokenService {
     if (!process.env.JWT_ACCESS_SECRET || !process.env.JWT_REFRESH_SECRET)
       throw ApiError.ServerError('Internal Server Error');
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
-      expiresIn: '15m',
+      expiresIn: '1h',
     });
     const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
       expiresIn: '24h',
