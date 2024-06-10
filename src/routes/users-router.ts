@@ -1,7 +1,11 @@
 import express from 'express';
 
 import usersController from '../controllers/users-controller';
-import { authMiddleware, getValidationResult } from '../middlewares';
+import {
+  authMiddleware,
+  checkUserUpdateMiddleware,
+  getValidationResult,
+} from '../middlewares';
 import { deleteUserValidator, updateUserValidator } from '../validators';
 
 export const getUsersRouter = () => {
@@ -17,6 +21,7 @@ export const getUsersRouter = () => {
     authMiddleware(['OWNER']),
     updateUserValidator,
     getValidationResult,
+    checkUserUpdateMiddleware,
     usersController.updateUser
   );
   router.delete(

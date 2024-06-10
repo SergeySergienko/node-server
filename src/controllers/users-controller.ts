@@ -23,9 +23,7 @@ class UsersController {
     next: NextFunction
   ) {
     try {
-      const { refreshToken } = req.cookies;
-
-      const user = await userService.updateUser(refreshToken, { ...req.body });
+      const user = await userService.updateUser(req.body);
       return res.json(user);
     } catch (error) {
       next(error);

@@ -18,4 +18,5 @@ __exportStar(require("./authMiddleware"), exports);
 __exportStar(require("./validationResultMiddleware"), exports);
 __exportStar(require("./errorMiddleware"), exports);
 __exportStar(require("./uploadMiddleware"), exports);
+__exportStar(require("./checkUserUpdateMiddleware"), exports);
 //# sourceMappingURL=index.js.map

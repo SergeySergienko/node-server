@@ -14,16 +14,7 @@ export const userService = {
     return usersForView;
   },
 
-  async updateUser(refreshToken: string, userDataToUpdate: UserUpdateModel) {
-    const userData =
-      tokenService.validateRefreshToken<CustomJwtPayload>(refreshToken);
-
-    if (userDataToUpdate.id === userData?.id) {
-      throw ApiError.ForbiddenError(
-        'User is not allowed to update their roles'
-      );
-    }
-
+  async updateUser(userDataToUpdate: UserUpdateModel) {
     const updatedUser = await usersRepo.updateUser(userDataToUpdate);
     if (!updatedUser) {
       throw ApiError.NotFound(

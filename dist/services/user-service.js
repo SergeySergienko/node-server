@@ -8,15 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.userService = void 0;
 const api_error_1 = require("../exceptions/api-error");
 const repositories_1 = require("../repositories");
 const utils_1 = require("../utils");
-const token_service_1 = __importDefault(require("./token-service"));
 exports.userService = {
     findUsers() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -28,12 +24,8 @@ exports.userService = {
             return usersForView;
         });
     },
-    updateUser(refreshToken, userDataToUpdate) {
+    updateUser(userDataToUpdate) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userData = token_service_1.default.validateRefreshToken(refreshToken);
-            if (userDataToUpdate.id === (userData === null || userData === void 0 ? void 0 : userData.id)) {
-                throw api_error_1.ApiError.ForbiddenError('User is not allowed to update their roles');
-            }
             const updatedUser = yield repositories_1.usersRepo.updateUser(userDataToUpdate);
             if (!updatedUser) {
                 throw api_error_1.ApiError.NotFound(`User with id: ${userDataToUpdate.id} wasn't found`);
