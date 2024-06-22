@@ -1,9 +1,9 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import { ProductModel } from '../types';
 import { RoleModel, TokenModel, UserModel } from '../models';
-import { uri } from './constants';
+import { uri, database_url } from './constants';
 
-const client = new MongoClient(uri, {
+const client = new MongoClient(database_url, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
