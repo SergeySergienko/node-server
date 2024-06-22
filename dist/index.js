@@ -10,11 +10,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const app_1 = require("./app");
-const repositories_1 = require("./repositories");
+const db_1_1 = require("./repositories/db_1");
 require("dotenv/config");
 const PORT = process.env.PORT || 5000;
 const startApp = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, repositories_1.runDb)();
+    yield (0, db_1_1.runDb_1)();
     app_1.app.listen(PORT, () => console.log('\x1b[36m%s\x1b[0m', `App is running on ${PORT} port...`));
 });
 startApp();
