@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.runDb = exports.imageCollection = exports.uploadsDB = exports.tokenCollection = exports.userCollection = exports.roleCollection = exports.productCollection = void 0;
 const mongodb_1 = require("mongodb");
 const constants_1 = require("./constants");
-const client = new mongodb_1.MongoClient(constants_1.database_url, {
+const client = new mongodb_1.MongoClient(constants_1.uri, {
     serverApi: {
         version: mongodb_1.ServerApiVersion.v1,
         strict: true,
@@ -33,7 +33,7 @@ function runDb() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield client.connect();
-            const doc = yield client.db('admin').command({ ping: 1 });
+            // const doc = await client.db('admin').command({ ping: 1 });
             console.log('\x1b[35m%s\x1b[0m', 'Pinged your deployment. You successfully connected to MongoDB!');
         }
         catch (error) {

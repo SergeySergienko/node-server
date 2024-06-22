@@ -3,7 +3,7 @@ import { ProductModel } from '../types';
 import { RoleModel, TokenModel, UserModel } from '../models';
 import { uri, database_url } from './constants';
 
-const client = new MongoClient(database_url, {
+const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
@@ -26,7 +26,7 @@ export const imageCollection = uploadsDB.collection('images.files');
 export async function runDb() {
   try {
     await client.connect();
-    const doc = await client.db('admin').command({ ping: 1 });
+    // const doc = await client.db('admin').command({ ping: 1 });
     console.log(
       '\x1b[35m%s\x1b[0m',
       'Pinged your deployment. You successfully connected to MongoDB!'
