@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.runDb = exports.imageCollection = exports.uploadsDB = exports.tokenCollection = exports.userCollection = exports.roleCollection = exports.productCollection = void 0;
 const mongodb_1 = require("mongodb");
 const constants_1 = require("./constants");
-const client = new mongodb_1.MongoClient(constants_1.uri, {
+const client = new mongodb_1.MongoClient(constants_1.database_url, {
     serverApi: {
         version: mongodb_1.ServerApiVersion.v1,
         strict: true,
