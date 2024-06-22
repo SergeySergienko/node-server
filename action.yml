@@ -1,0 +1,6 @@
+name: 'Set Node 20'
+description: 'Modify actions to run on Node 20'
+
+runs:
+  using: 'node20'
+  main: 'dist/index.js'
