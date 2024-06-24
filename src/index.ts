@@ -1,11 +1,11 @@
 import { app } from './app';
-import { runDb_1 } from './repositories/db_1';
+import { runDb } from './repositories/db';
 import 'dotenv/config';
 
 const PORT = process.env.PORT || 5000;
 
 const startApp = async () => {
-  await runDb_1();
+  await runDb();
   app.listen(PORT, () =>
     console.log('\x1b[36m%s\x1b[0m', `App is running on ${PORT} port...`)
   );
