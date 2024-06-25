@@ -1,6 +1,6 @@
 import multer from 'multer';
 import { GridFsStorage } from 'multer-gridfs-storage';
-import { url } from '../repositories/constants';
+import { uploadUrl as url } from '../repositories/constants';
 
 export const uploadMiddleware = () => {
   const storage = new GridFsStorage({

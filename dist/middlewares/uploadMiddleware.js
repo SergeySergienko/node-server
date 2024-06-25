@@ -9,7 +9,7 @@ const multer_gridfs_storage_1 = require("multer-gridfs-storage");
 const constants_1 = require("../repositories/constants");
 const uploadMiddleware = () => {
     const storage = new multer_gridfs_storage_1.GridFsStorage({
-        url: constants_1.url,
+        url: constants_1.uploadUrl,
         file: (request, file) => {
             if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
                 return {
