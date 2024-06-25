@@ -1,7 +1,7 @@
 import { MongoClient, ServerApiVersion } from 'mongodb';
 import { ProductModel } from '../types';
 import { RoleModel, TokenModel, UserModel } from '../models';
-import { uri, database_url } from './constants';
+import { uri } from './constants';
 
 const client = new MongoClient(uri, {
   serverApi: {

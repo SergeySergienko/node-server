@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
-import { UserOutputModel, UserUpdateModel } from '../models';
+import { RoleModel, UserOutputModel, UserUpdateModel } from '../models';
 import { userService } from '../services';
-import { RequestWithBody } from '../types';
+import {
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+} from '../types';
 
 class UsersController {
   async findUsers(
@@ -18,12 +22,19 @@ class UsersController {
   }
 
   async updateUser(
-    req: RequestWithBody<UserUpdateModel>,
+    req: RequestWithParamsAndBody<
+      { id: string },
+      { roles: Array<RoleModel['value']> }
+    >,
     res: Response<UserOutputModel>,
     next: NextFunction
   ) {
+    const {
+      params: { id },
+      body: { roles },
+    } = req;
     try {
-      const user = await userService.updateUser(req.body);
+      const user = await userService.updateUser({ id, roles });
       return res.json(user);
     } catch (error) {
       next(error);

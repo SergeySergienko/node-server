@@ -1,8 +1,7 @@
 import { ApiError } from '../exceptions/api-error';
-import { CustomJwtPayload, UserOutputModel, UserUpdateModel } from '../models';
+import { UserOutputModel, UserUpdateModel } from '../models';
 import { usersRepo } from '../repositories';
 import { userModelMapper } from '../utils';
-import tokenService from './token-service';
 
 export const userService = {
   async findUsers() {

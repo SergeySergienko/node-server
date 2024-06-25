@@ -1,7 +1,7 @@
 import { body, param } from 'express-validator';
 import { RoleModel } from '../models';
 
-const userIdValidator = body('id', 'id must have mongoId format').isMongoId();
+const userIdValidator = param('id', 'id must have mongoId format').isMongoId();
 
 const userRolesValidator = body(
   'roles',
@@ -15,7 +15,4 @@ const userRolesValidator = body(
 
 export const updateUserValidator = [userIdValidator, userRolesValidator];
 
-export const deleteUserValidator = param(
-  'id',
-  'id must have mongoId format'
-).isMongoId();
+export const deleteUserValidator = [userIdValidator];

@@ -17,7 +17,7 @@ export const getUsersRouter = () => {
     usersController.findUsers
   );
   router.put(
-    '/',
+    '/:id',
     authMiddleware(['OWNER']),
     updateUserValidator,
     getValidationResult,

@@ -13,7 +13,7 @@ const getAuthRouter = () => {
     router.post('/signup', validators_1.authValidator, middlewares_1.getValidationResult, auth_controller_1.default.signup);
     router.post('/login', auth_controller_1.default.login);
     router.post('/logout', auth_controller_1.default.logout);
-    router.get('/activate/:link', auth_controller_1.default.activate);
+    router.put('/activate/:link', auth_controller_1.default.activate);
     router.get('/refresh', auth_controller_1.default.refresh);
     return router;
 };

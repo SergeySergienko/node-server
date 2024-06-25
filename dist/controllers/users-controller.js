@@ -24,8 +24,9 @@ class UsersController {
     }
     updateUser(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
+            const { params: { id }, body: { roles }, } = req;
             try {
-                const user = yield services_1.userService.updateUser(req.body);
+                const user = yield services_1.userService.updateUser({ id, roles });
                 return res.json(user);
             }
             catch (error) {
